@@ -1,6 +1,6 @@
 import os
 
-def listar_estructura(carpeta_base, excluir=[".venv", "__pycache__", ".git"], nivel=0):
+def listar_estructura(carpeta_base, excluir=[".venv", "__pycache__", ".git", "docs"], nivel=0):
     for elemento in os.listdir(carpeta_base):
         ruta = os.path.join(carpeta_base, elemento)
         
