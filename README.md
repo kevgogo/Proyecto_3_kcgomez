@@ -85,34 +85,45 @@ Este proyecto implementa una aplicación web para gestionar una heladería, desa
 ## **Estructura del Proyecto**
 
 ```plaintext
+|-- .env                       # Variables de entorno sensibles
+|-- .gitattributes             # Configuraciones específicas de Git
+|-- .gitignore                 # Archivos/carpetas ignorados por Git
 |-- app/
 |   |-- data_loader.py          # Carga datos desde archivos CSV
 |   |-- extensions.py           # Inicialización de SQLAlchemy
 |   |-- routes.py               # Rutas de Flask
 |   |-- utils.py                # Funciones auxiliares
 |   |-- __init__.py             # Configuración principal de Flask
+|-- app.py                      # Punto de entrada principal de la app
+|-- config.py                   # Configuración general del proyecto
 |-- controllers/
 |   |-- heladeria_controler.py  # Controladores para la lógica de negocio
-|-- models/
-|   |-- ingrediente.py          # Modelo de Ingredientes
-|   |-- producto.py             # Modelo de Productos
 |-- data/
 |   |-- ingredientes.csv        # Datos iniciales de ingredientes
 |   |-- productos.csv           # Datos iniciales de productos
 |-- database/
-|   |-- Diagrama_ER.png         # Diagrama entidad-relación
 |   |-- HELADERIA.db            # Base de datos SQLite
+|-- docs/
+|   |-- Diagrama_ER.png         # Diagrama entidad-relación
+|   |-- Proyecto.pdf            # Enunciado del proyecto
+|   |-- Rubrica Proyecto.pdf    # Rúbrica del proyecto
+|-- LICENSE                     # Licencia del proyecto
+|-- list.py                     # Archivo adicional no utilizado directamente
+|-- models/
+|   |-- heladeria.py            # Clase Heladería
+|   |-- ingrediente.py          # Modelo Ingrediente
+|   |-- producto.py             # Modelo Producto
+|-- README.md                   # Documentación del proyecto
+|-- requirements.txt            # Dependencias del proyecto
+|-- run_tests.py                # Script para ejecutar pruebas
 |-- templates/
 |   |-- index.html              # Página principal
 |   |-- ingredientes.html       # Vista de ingredientes
 |   |-- productos.html          # Vista de productos
-|   |-- vender.html             # Página de ventas
-|   |-- resultado.html          # Resultados de la venta
+|   |-- resultado.html          # Vista de resultados
+|   |-- vender.html             # Página para ventas
 |-- tests/
 |   |-- test_heladeria.py       # Pruebas unitarias
-|-- app.py                      # Punto de entrada principal
-|-- config.py                   # Configuración del proyecto
-|-- requirements.txt            # Dependencias del proyecto
 ```
 
 ## **Pruebas**
