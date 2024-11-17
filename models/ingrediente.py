@@ -17,13 +17,26 @@ class Ingrediente(db.Model):
         self.inventario = inventario
         self.es_vegetariano = es_vegetariano
 
+    def _guardar_cambios(self):
+        if hasattr(db, 'session'):
+            db.session.commit()
+
     def abastecer(self, cantidad):
+        if cantidad <= 0:
+            raise ValueError("La cantidad debe ser positiva.")
         self.inventario += cantidad
-        db.session.commit()
+        self._guardar_cambios()
 
     def reducir_inventario(self, cantidad):
         if self.inventario >= cantidad:
             self.inventario -= cantidad
-            db.session.commit()
+            self._guardar_cambios()
         else:
             raise ValueError(f"No hay suficiente inventario para {self.nombre}.")
+
+    def es_sano(self):
+        return self.calorias < 300
+
+    def renovar_inventario(self, cantidad):
+        self.inventario += cantidad
+        self._guardar_cambios()

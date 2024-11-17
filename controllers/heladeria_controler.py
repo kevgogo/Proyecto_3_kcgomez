@@ -36,5 +36,12 @@ class HeladeriaController:
         for ingrediente in ingredientes:
             ingrediente.reducir_inventario(1)
 
-        db.session.commit()
+        if hasattr(db, 'session'):
+            db.session.commit()
         return "¡Vendido!"
+    
+    @staticmethod
+    def encontrar_producto_mas_rentable():
+        from models.producto import Producto
+        productos = Producto.query.all()
+        return max(productos, key=lambda p: p.rentabilidad())
