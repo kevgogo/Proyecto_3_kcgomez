@@ -8,6 +8,8 @@ from app.data_loader import cargar_datos
 from app.utils import conditional_print
 from app.extensions import db
 from config import Config
+from models.ingrediente import Ingrediente
+from models.producto import Producto
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 app.secret_key = Config.SECRET_KEY
@@ -30,12 +32,9 @@ with app.app_context():
     try:
         inspector = inspect(db.engine)
         tables = inspector.get_table_names()
-        if tables:
-            conditional_print(f"Existing tables: {tables}")
-            db.drop_all() 
-        else:
+        if not tables:
             conditional_print("No tables found. Ready to create tables.")
-        db.create_all() 
+            db.create_all()
         cargar_datos()
     except Exception as e:
         conditional_print(f"Error with inspector or database operations: {e}")
