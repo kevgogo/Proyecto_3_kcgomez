@@ -22,9 +22,9 @@
               <strong>Tipo:</strong> {{ producto.tipo }}<br>
               <strong>Ingredientes:</strong>
             <ul>
-              <li>{{ producto.ingrediente1.nombre }}</li>
-              <li>{{ producto.ingrediente2.nombre }}</li>
-              <li>{{ producto.ingrediente3.nombre }}</li>
+              {% for ingrediente in producto.ingredientes %}
+              <li>{{ ingrediente.nombre }}</li>
+              {% endfor %}
             </ul>
             </p>
           </div>

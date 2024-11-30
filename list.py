@@ -15,6 +15,6 @@ def listar_estructura(carpeta_base, excluir=[".venv", "__pycache__", ".git", ".v
         if os.path.isdir(ruta):
             listar_estructura(ruta, excluir, nivel + 1)
 
-# Cambia "ruta_del_proyecto" por la ruta base de tu proyecto
-ruta_del_proyecto = "K:/Development/CURSOS/UNIANDES/Modulo 2/Proyecto_2_kc.gomez"
+# Usar el directorio actual como base
+ruta_del_proyecto = os.getcwd()
 listar_estructura(ruta_del_proyecto)

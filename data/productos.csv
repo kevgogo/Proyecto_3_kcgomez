@@ -1,51 +1,51 @@
-id,nombre,precio_publico,tipo,ingrediente1_id,ingrediente2_id,ingrediente3_id
-1,Helado de Vainilla,10.0,copa,1,3,5
-2,Helado de Chocolate,12.0,copa,1,3,8
-3,Helado de Fresa,11.0,copa,1,3,6
-4,Helado de Mango,11.5,copa,1,3,7
-5,Helado Napolitano,13.0,copa,1,8,6
-6,Sundae de Chocolate,8.0,copa,1,8,17
-7,Milkshake de Fresa,7.5,malteada,1,3,16
-8,Paleta de Frutas,4.5,copa,6,7,3
-9,Torta Helada,15.0,copa,10,5,8
-10,Cono Clásico,6.0,copa,1,3,5
-11,Helado de Frambuesa,12.0,copa,1,3,11
-12,Helado de Piña,11.5,copa,1,3,12
-13,Helado de Durazno,11.0,copa,1,3,13
-14,Helado de Plátano,10.5,copa,1,3,14
-15,Helado de Coco,12.0,copa,1,3,24
-16,Helado de Menta,11.0,copa,1,3,17
-17,Helado de Matcha,14.0,copa,1,3,18
-18,Helado de Café,12.0,malteada,1,3,19
-19,Helado de Uva,12.5,malteada,1,3,20
-20,Helado de Manzana Verde,11.5,copa,1,3,12
-21,Helado de Caramelo,13.0,copa,1,3,15
-22,Helado de Chocolate Blanco,14.0,copa,1,3,8
-23,Helado de Frutos Rojos,13.5,copa,11,16,25
-24,Helado de Higo,14.5,copa,1,3,13
-25,Helado de Zanahoria,10.0,copa,1,3,14
-26,Sundae de Fresa,8.5,copa,1,3,16
-27,Sundae de Oreo,9.5,copa,1,10,3
-28,Sundae de Caramelo Salado,9.0,copa,1,15,3
-29,Milkshake de Mora,7.5,malteada,1,16,25
-30,Milkshake de Uva,7.5,malteada,1,20,25
-31,Milkshake de Menta,7.5,malteada,1,17,25
-32,Paleta de Mango,5.0,copa,7,3,15
-33,Paleta de Limón,4.0,copa,14,3,13
-34,Paleta de Fresa,4.5,copa,6,3,16
-35,Paleta de Frutos Rojos,5.0,copa,11,16,25
-36,Torta de Chocolate,18.0,copa,10,8,3
-37,Torta de Vainilla,17.0,copa,10,5,3
-38,Torta de Frutas,18.5,copa,10,6,7
-39,Torta de Queso,19.0,copa,10,8,13
-40,Torta de Zanahoria,15.0,copa,10,14,3
-41,Helado Especial Tropical,14.0,copa,7,13,6
-42,Helado Especial Frutal,14.5,copa,11,13,12
-43,Helado Caramelo Clásico,13.5,copa,1,15,3
-44,Helado Gourmet Avellana,15.0,copa,1,18,19
-45,Helado Gourmet Piña,14.0,copa,1,12,3
-46,Helado Gourmet Maracuyá,14.5,copa,1,3,25
-47,Cono de Chocolate Blanco,8.5,copa,8,3,15
-48,Cono de Frambuesa,8.0,copa,11,3,15
-49,Cono Tropical,8.5,copa,7,3,15
-50,Sundae Clásico,7.5,copa,1,3,15
+id,nombre,precio_publico,tipo
+1,Helado de Vainilla,10.0,copa
+2,Helado de Chocolate,12.0,copa
+3,Helado de Fresa,11.0,copa
+4,Helado de Mango,11.5,copa
+5,Helado Napolitano,13.0,copa
+6,Sundae de Chocolate,8.0,copa
+7,Milkshake de Fresa,7.5,malteada
+8,Paleta de Frutas,4.5,copa
+9,Torta Helada,15.0,copa
+10,Cono Clásico,6.0,copa
+11,Helado de Frambuesa,12.0,copa
+12,Helado de Piña,11.5,copa
+13,Helado de Durazno,11.0,copa
+14,Helado de Plátano,10.5,copa
+15,Helado de Coco,12.0,copa
+16,Helado de Menta,11.0,copa
+17,Helado de Matcha,14.0,copa
+18,Helado de Café,12.0,malteada
+19,Helado de Uva,12.5,malteada
+20,Helado de Manzana Verde,11.5,copa
+21,Helado de Caramelo,13.0,copa
+22,Helado de Chocolate Blanco,14.0,copa
+23,Helado de Frutos Rojos,13.5,copa
+24,Helado de Higo,14.5,copa
+25,Helado de Zanahoria,10.0,copa
+26,Sundae de Fresa,8.5,copa
+27,Sundae de Oreo,9.5,copa
+28,Sundae de Caramelo Salado,9.0,copa
+29,Milkshake de Mora,7.5,malteada
+30,Milkshake de Uva,7.5,malteada
+31,Milkshake de Menta,7.5,malteada
+32,Paleta de Mango,5.0,copa
+33,Paleta de Limón,4.0,copa
+34,Paleta de Fresa,4.5,copa
+35,Paleta de Frutos Rojos,5.0,copa
+36,Torta de Chocolate,18.0,copa
+37,Torta de Vainilla,17.0,copa
+38,Torta de Frutas,18.5,copa
+39,Torta de Queso,19.0,copa
+40,Torta de Zanahoria,15.0,copa
+41,Helado Especial Tropical,14.0,copa
+42,Helado Especial Frutal,14.5,copa
+43,Helado Caramelo Clásico,13.5,copa
+44,Helado Gourmet Avellana,15.0,copa
+45,Helado Gourmet Piña,14.0,copa
+46,Helado Gourmet Maracuyá,14.5,copa
+47,Cono de Chocolate Blanco,8.5,copa
+48,Cono de Frambuesa,8.0,copa
+49,Cono Tropical,8.5,copa
+50,Sundae Clásico,7.5,copa

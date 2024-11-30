@@ -9,17 +9,18 @@ class Config:
     APP_ENV = os.getenv('APP_ENV', 'development')
     ENABLE_PRINTS = os.getenv('ENABLE_PRINTS', 'false').lower() == 'true'
     TESTING = os.getenv('TESTING', 'false').lower() == 'true'
-
+    API_PREFIX = os.getenv('API_PREFIX', '/api')
+    
     # Database Configuration
     NAME_DB = os.getenv('NAME_DB', 'heladeria')
 
     @staticmethod
     def database_uri():
         basedir = os.path.abspath(os.path.dirname(__file__))
-        os.makedirs(os.path.join(basedir, "database"), exist_ok=True)
+        os.makedirs(os.path.join(basedir, "db"), exist_ok=True)
         db_path = os.path.join(
             basedir, 
-            "database", 
+            "db", 
             f"{'test_' + Config.NAME_DB if Config.TESTING else Config.NAME_DB}.db"
         )
         return f"sqlite:///{db_path}"

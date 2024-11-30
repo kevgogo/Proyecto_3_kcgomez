@@ -1,5 +1,5 @@
-from config import Config
+from app.extensions import Config
 
 def conditional_print(message):
     if Config.ENABLE_PRINTS:
-        print(message)
+        print(f" * {message}")

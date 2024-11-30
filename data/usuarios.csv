@@ -1,0 +1,4 @@
+username,password,es_admin,es_empleado
+admin,admin123,true,false
+empleado,empleado123,false,true
+cliente,cliente123,false,false

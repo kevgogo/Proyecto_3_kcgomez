@@ -1,10 +1,12 @@
-# Proyecto 2 - Heladería Web
+# Proyecto 3 - Heladería Web
 
 Este proyecto implementa una aplicación web para gestionar una heladería, desarrollado como parte del curso **COLSUBSIDIO BACKEND CON PYTHON GRUPO 2**. La aplicación utiliza el framework Flask y permite realizar operaciones básicas como listar productos e ingredientes, registrar ventas y gestionar inventarios, con una base de datos administrada con SQLAlchemy.
 
+Retomamos el proyecto trabajado en el repo https://github.com/kevgogo/Proyecto_2_kc.gomez
+
 ## **Contenido**
 
-- [Proyecto 2 - Heladería Web](#proyecto-2---heladería-web)
+- [Proyecto 3 - Heladería Web](#proyecto-3---heladería-web)
   - [**Contenido**](#contenido)
   - [**Características**](#características)
   - [**Requisitos**](#requisitos)
@@ -42,7 +44,7 @@ Este proyecto implementa una aplicación web para gestionar una heladería, desa
 
 1. Clona este repositorio:
    ```bash
-   git clone https://github.com/<usuario>/PROYECTO2-<login>.git
+   git clone https://github.com/kevgogo/Proyecto_3_kcgomez.git
    cd PROYECTO2-<login>
    ```
 

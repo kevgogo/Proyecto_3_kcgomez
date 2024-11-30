@@ -1,42 +1,37 @@
-import shutil
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, text, inspect
-from pymysql import OperationalError
-
-from app.data_loader import cargar_datos
-from app.utils import conditional_print
-from app.extensions import db
 from config import Config
-from models.ingrediente import Ingrediente
-from models.producto import Producto
+from app.extensions import db, bcrypt
+from app.utils import conditional_print
 
-app = Flask(__name__, template_folder='../templates', static_folder='../static')
-app.secret_key = Config.SECRET_KEY
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app():
+    """
+    Configura y retorna la aplicación Flask con extensiones y rutas registradas.
+    """
+    # Crear instancia de la aplicación Flask
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = Config.database_uri()
-conditional_print(f"Final SQLALCHEMY_DATABASE_URI: {Config.database_uri()}")
+    app.secret_key = Config.SECRET_KEY
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db.init_app(app)
-conditional_print("SQLAlchemy initialized successfully.")
+    app.config['SQLALCHEMY_DATABASE_URI'] = Config.database_uri()
+    conditional_print(f"Final SQLALCHEMY_DATABASE_URI: {Config.database_uri()}")
+    
+    # Inicializar extensiones
+    db.init_app(app)
+    conditional_print("SQLAlchemy initialized successfully.")
 
-with app.app_context():
-    try:
-        connection = db.engine.connect()
-        conditional_print("Database connection successful.")
-        connection.close()
-    except Exception as e:
-        conditional_print(f"Database connection failed: {e}")
+    bcrypt.init_app(app)
+    conditional_print("BCrypt initialized successfully.")
 
-    try:
-        inspector = inspect(db.engine)
-        tables = inspector.get_table_names()
-        if not tables:
-            conditional_print("No tables found. Ready to create tables.")
-            db.create_all()
-        cargar_datos()
-    except Exception as e:
-        conditional_print(f"Error with inspector or database operations: {e}")
+    with app.app_context():
+        from app.api_routes import registrar_rutas_api
+        from app.web_routes import registrar_rutas_web
 
-from app import routes
+        registrar_rutas_api(app)
+        registrar_rutas_web(app)
+    
+        from app.data_loader import inicializar_base_de_datos
+        inicializar_base_de_datos()
+
+    return app
