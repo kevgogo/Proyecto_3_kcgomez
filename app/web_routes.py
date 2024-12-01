@@ -9,13 +9,14 @@ def registrar_rutas_web(app):
 
     @app.route('/')
     def index():
-        """Página principal que muestra los primeros 4 productos desde la API."""
+        """Página principal que muestra los primeros 4 productos desde¿ la API."""
         try:
             # Generar la URL completa para listar productos
             api_url = f"{request.host_url}api/productos"
             response = requests.get(api_url)
             response.raise_for_status()
-            productos = response.json()[:4]
+            result = response.json()
+            productos = result["result"][:4]
         except requests.RequestException:
             flash("Error al obtener productos desde la API.", "danger")
             productos = []
@@ -28,7 +29,7 @@ def registrar_rutas_web(app):
             api_url = f"{request.host_url}api/ingredientes"
             response = requests.get(api_url)
             response.raise_for_status()
-            ingredientes = response.json()
+            ingredientes = response.json()["result"]
         except requests.RequestException:
             flash("Error al obtener ingredientes desde la API.", "danger")
             ingredientes = []
@@ -41,7 +42,7 @@ def registrar_rutas_web(app):
             api_url = f"{request.host_url}api/productos"
             response = requests.get(api_url)
             response.raise_for_status()
-            productos = response.json()
+            productos = response.json()["result"]
         except requests.RequestException:
             flash("Error al obtener productos desde la API.", "danger")
             productos = []
@@ -54,7 +55,7 @@ def registrar_rutas_web(app):
             api_url = f"{request.host_url}api/productos"
             response = requests.get(api_url)
             response.raise_for_status()
-            productos = response.json()
+            productos = response.json()["result"]
         except requests.RequestException:
             flash("Error al obtener productos desde la API.", "danger")
             productos = []
@@ -67,6 +68,7 @@ def registrar_rutas_web(app):
             api_url = f"{request.host_url}api/productos/{id}/vender"
             response = requests.post(api_url)
             response.raise_for_status()
+            result = response.json()["result"]
             flash(f"Producto con ID {id} vendido exitosamente.", "success")
         except requests.RequestException:
             flash(f"Error al vender el producto con ID {id}.", "danger")

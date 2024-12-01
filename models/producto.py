@@ -21,10 +21,10 @@ class Producto(db.Model):
         self.tipo = tipo
 
     def calcular_costo(self):
-        return self.ingrediente1.precio + self.ingrediente2.precio + self.ingrediente3.precio
+        return sum(ingrediente.precio for ingrediente in self.ingredientes)
 
     def calcular_calorias(self):
-        return self.ingrediente1.calorias + self.ingrediente2.calorias + self.ingrediente3.calorias
+        return sum(ingrediente.calorias for ingrediente in self.ingredientes)
 
     def rentabilidad(self):
         return self.precio_publico - self.calcular_costo()

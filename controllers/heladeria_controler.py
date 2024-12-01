@@ -59,7 +59,12 @@ class HeladeriaController:
         producto = Producto.query.get(id)
         if not producto:
             raise ValueError(f"Producto con ID {id} no encontrado.")
-        return {"calorias": producto.calorias}
+        # Calcular las calorías totales a partir de los ingredientes
+        calorias = sum(ingrediente.calorias for ingrediente in producto.ingredientes)
+        return {
+            "nombre": producto.nombre,
+            "calorias": calorias,
+        }
 
     @staticmethod
     @manejar_errores
@@ -68,7 +73,10 @@ class HeladeriaController:
         producto = Producto.query.get(id)
         if not producto:
             raise ValueError(f"Producto con ID {id} no encontrado.")
-        return {"rentabilidad": producto.rentabilidad}
+        return  {
+            "nombre": producto.nombre,
+            "rentabilidad": producto.rentabilidad()
+        }
 
     @staticmethod
     @manejar_errores
@@ -77,7 +85,10 @@ class HeladeriaController:
         producto = Producto.query.get(id)
         if not producto:
             raise ValueError(f"Producto con ID {id} no encontrado.")
-        return {"costo": producto.costo}
+        return {
+            "nombre": producto.nombre,
+            "costo": producto.calcular_costo()
+        }
 
     @staticmethod
     @manejar_errores
@@ -94,7 +105,6 @@ class HeladeriaController:
         for ingrediente in producto.ingredientes:
             ingrediente.reducir_inventario(1)
 
-        db.session.commit()
         return f"Producto '{producto.nombre}' vendido exitosamente."
 
     @staticmethod
@@ -107,12 +117,26 @@ class HeladeriaController:
         
         if cantidad <= 0:
             raise ValueError("La cantidad para reabastecer debe ser mayor a cero.")
-
+        
+        inventario_cambios = []
+        
         for ingrediente in producto.ingredientes:
+            cantidad_anterior = ingrediente.inventario
             ingrediente.abastecer(cantidad)
+            cantidad_posterior = ingrediente.inventario
+            inventario_cambios.append({
+                "ingrediente_id": ingrediente.id,
+                "ingrediente_nombre": ingrediente.nombre,
+                "cantidad_anterior": cantidad_anterior,
+                "cantidad_posterior": cantidad_posterior
+            })
 
         db.session.commit()
-        return f"Producto con ID {id} reabastecido con {cantidad} unidades por ingrediente."
+        
+        return {
+            "message": f"Producto '{producto.nombre}' reabastecido con {cantidad} unidades por ingrediente.",
+            "result": inventario_cambios
+        }
 
     @staticmethod
     @manejar_errores
@@ -124,12 +148,26 @@ class HeladeriaController:
         
         if cantidad <= 0:
             raise ValueError("La cantidad para renovar debe ser mayor a cero.")
+        
+        inventario_cambios = []
 
         for ingrediente in producto.ingredientes:
+            cantidad_anterior = ingrediente.inventario
             ingrediente.renovar_inventario(cantidad)
+            cantidad_posterior = ingrediente.inventario
+            inventario_cambios.append({
+                "ingrediente_id": ingrediente.id,
+                "ingrediente_nombre": ingrediente.nombre,
+                "cantidad_anterior": cantidad_anterior,
+                "cantidad_posterior": cantidad_posterior
+            })
 
         db.session.commit()
-        return f"Inventario del producto con ID {id} renovado a {cantidad} unidades por ingrediente."
+
+        return {
+            "message": f"Inventario del producto '{producto.nombre}' renovado a {cantidad} unidades por ingrediente.",
+            "result": inventario_cambios
+        }
 
     # ------------------- Métodos para Ingredientes -------------------
 
@@ -138,7 +176,7 @@ class HeladeriaController:
     def listar_ingredientes():
         from models.ingrediente import Ingrediente
         ingredientes = Ingrediente.query.all()
-        return [ingrediente.serialize() for ingrediente in ingredientes]
+        return [ingrediente.to_dict() for ingrediente in ingredientes]
 
     @staticmethod
     @manejar_errores
@@ -147,7 +185,7 @@ class HeladeriaController:
         ingrediente = Ingrediente.query.get(id)
         if not ingrediente:
             raise ValueError(f"Ingrediente con ID {id} no encontrado.")
-        return ingrediente.serialize()
+        return ingrediente.to_dict()
 
     @staticmethod
     @manejar_errores
@@ -156,7 +194,7 @@ class HeladeriaController:
         ingrediente = Ingrediente.query.filter_by(nombre=nombre).first()
         if not ingrediente:
             raise ValueError(f"Ingrediente con nombre '{nombre}' no encontrado.")
-        return ingrediente.serialize()
+        return ingrediente.to_dict()
 
     @staticmethod
     @manejar_errores
@@ -165,4 +203,7 @@ class HeladeriaController:
         ingrediente = Ingrediente.query.get(id)
         if not ingrediente:
             raise ValueError(f"Ingrediente con ID {id} no encontrado.")
-        return {"es_sano": ingrediente.es_sano()}
+        return {
+            "nombre": ingrediente.nombre,
+            "es_sano": ingrediente.es_sano()
+        }

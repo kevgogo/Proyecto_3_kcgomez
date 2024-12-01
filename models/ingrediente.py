@@ -42,7 +42,9 @@ class Ingrediente(db.Model):
             raise ValueError(f"No hay suficiente inventario para {self.nombre}.")
         
     def renovar_inventario(self, cantidad):
-        self.inventario += cantidad
+        if cantidad <= 0:
+            raise ValueError("La cantidad debe ser positiva.")
+        self.inventario = cantidad
         self._guardar_cambios()
 
     def es_sano(self):

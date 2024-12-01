@@ -9,31 +9,36 @@
 </head>
 
 <body>
-  <div class="container mt-5">
-    <h1 class="text-center mb-4">Lista de Ingredientes</h1>
+  <div class="container mt-4">
+    <h1 class="text-center">Lista de Ingredientes</h1>
+    {% if ingredientes %}
     <table class="table table-striped">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Nombre</th>
           <th>Precio</th>
           <th>Calorías</th>
-          <th>Inventario</th>
-          <th>Es Vegetariano</th>
+          <th>Vegetariano</th>
         </tr>
       </thead>
       <tbody>
-        {% for ingrediente in ingredientes %}
+        {% for ingrediente in ingredientes.result %}
         <tr>
+          <td>{{ ingrediente.id }}</td>
           <td>{{ ingrediente.nombre }}</td>
           <td>${{ ingrediente.precio }}</td>
           <td>{{ ingrediente.calorias }}</td>
-          <td>{{ ingrediente.inventario }}</td>
           <td>{{ "Sí" if ingrediente.es_vegetariano else "No" }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+    {% else %}
+    <p class="text-center text-muted">No hay ingredientes disponibles.</p>
+    {% endif %}
   </div>
+
 
   <div class="text-center mt-4">
     <a href="/ingredientes" class="btn btn-secondary">Ver Ingredientes</a>

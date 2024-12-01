@@ -9,29 +9,32 @@
 </head>
 
 <body>
-  <div class="container mt-5">
-    <h1 class="text-center mb-4">Lista de Productos</h1>
+  <div class="container mt-4">
+    <h1 class="text-center">Lista de Productos</h1>
+    {% if productos %}
     <div class="row">
-      {% for producto in productos %}
+      {% for producto in productos.result %}
       <div class="col-md-4">
-        <div class="card mb-3">
+        <div class="card mb-4">
           <div class="card-body">
             <h5 class="card-title">{{ producto.nombre }}</h5>
-            <p class="card-text">
-              <strong>Precio Público:</strong> ${{ producto.precio_publico }}<br>
-              <strong>Tipo:</strong> {{ producto.tipo }}<br>
-              <strong>Ingredientes:</strong>
+            <p class="card-text">Precio: ${{ producto.precio_publico }}</p>
+            <p class="card-text">Tipo: {{ producto.tipo }}</p>
+            <p class="card-text">Calorías: {{ producto.calorias }}</p>
             <ul>
               {% for ingrediente in producto.ingredientes %}
               <li>{{ ingrediente.nombre }}</li>
               {% endfor %}
             </ul>
-            </p>
+            <a href="/vender/{{ producto.id }}" class="btn btn-primary">Vender</a>
           </div>
         </div>
       </div>
       {% endfor %}
     </div>
+    {% else %}
+    <p class="text-center text-muted">No hay productos disponibles en este momento.</p>
+    {% endif %}
   </div>
 
   <div class="text-center mt-4">
