@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
 from config import Config
 
 # Instancias de las extensiones
 db = SQLAlchemy()
-# bcrypt = Bcrypt()
+bcrypt = Bcrypt()
 jwt = JWTManager()
 
 def initialize_extensions(app):
@@ -13,8 +14,8 @@ def initialize_extensions(app):
     """
     db.init_app(app)
     Config.conditional_print("SQLAlchemy initialized successfully.")
-    # bcrypt.init_app(app)
-    # Config.conditional_print("BCrypt initialized successfully.")
+    bcrypt.init_app(app)
+    Config.conditional_print("BCrypt initialized successfully.")
     jwt.init_app(app)
     Config.conditional_print("JWT initialized successfully.")
 

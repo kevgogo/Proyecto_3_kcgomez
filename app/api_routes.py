@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from config import Config
 from controllers.heladeria_controler import HeladeriaController
-from werkzeug.security import generate_password_hash, check_password_hash
+from app.extensions import bcrypt
 from app.utils import requerir_rol_api
 from models.usuario import Usuario
 
@@ -25,7 +25,7 @@ def login():
         return jsonify({"message": "Usuario no encontrado"}), 401
 
     # Verificar contraseña
-    if not check_password_hash(usuario.password, password):
+    if not bcrypt.check_password_hash(usuario.password, password):
     # if not bcrypt.check_password_hash(usuario.password, password):
         print(f"Error: Contraseña incorrecta para el usuario {username}")
         return jsonify({"message": "Credenciales inválidas"}), 401
