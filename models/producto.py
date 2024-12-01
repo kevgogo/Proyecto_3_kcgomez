@@ -29,7 +29,7 @@ class Producto(db.Model):
     def rentabilidad(self):
         return self.precio_publico - self.calcular_costo()
     
-    def serialize(self):
+    def to_dict(self):
         return {
             "id": self.id,
             "nombre": self.nombre,

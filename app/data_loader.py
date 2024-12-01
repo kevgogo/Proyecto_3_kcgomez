@@ -1,12 +1,15 @@
 import csv
 import os
-from app.extensions import db, bcrypt
-from app.utils import conditional_print
+from app.extensions import db
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from models.producto import Producto
 from models.ingrediente import Ingrediente
 from models.usuario import Usuario
+from config import Config
 
 def inicializar_base_de_datos():
+    
     from sqlalchemy import create_engine, text, inspect
 
     """
@@ -14,35 +17,35 @@ def inicializar_base_de_datos():
     """
     try:
         connection = db.engine.connect()
-        conditional_print("Database connection successful.")
+        Config.conditional_print("Database connection successful.")
         connection.close()
     except Exception as e:
-        conditional_print(f"Database connection failed: {e}")
+        Config.conditional_print(f"Database connection failed: {e}")
 
     try:
         inspector = inspect(db.engine)
         tables = inspector.get_table_names()
 
         if not tables:
-            conditional_print("No tables found. Ready to create tables.")
+            Config.conditional_print("No tables found. Ready to create tables.")
             db.create_all()
-            conditional_print("Tables created successfully.")
+            Config.conditional_print("Tables created successfully.")
         else:
             with db.engine.connect() as conn:
                 sqlite_sequence_exists = conn.execute(text("SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence';")).fetchone()
 
-            conditional_print(f"Tables found ({tables}). Proceeding to truncate...")
+            Config.conditional_print(f"Tables found ({tables}). Proceeding to truncate...")
             with db.engine.begin() as conn:
                 for table in tables:
                     conn.execute(text(f"DELETE FROM {table}"))
                     if sqlite_sequence_exists:
                         conn.execute(text(f"UPDATE sqlite_sequence SET seq = 0 WHERE name = '{table}'"))
-            conditional_print("All tables truncated successfully.")
+            Config.conditional_print("All tables truncated successfully.")
 
         # Cargar datos
         cargar_datos()
     except Exception as e:
-        conditional_print(f"Error with inspector or database operations: {e}")
+        Config.conditional_print(f"Error with inspector or database operations: {e}")
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
@@ -72,9 +75,9 @@ def cargar_ingredientes(ruta_csv):
                 )
                 db.session.merge(ingrediente)  # Merge para evitar duplicados
         db.session.commit()
-        conditional_print("Datos de ingredientes cargados correctamente.")
+        Config.conditional_print("Datos de ingredientes cargados correctamente.")
     except Exception as e:
-        conditional_print(f"Error al cargar datos de ingredientes: {e}")
+        Config.conditional_print(f"Error al cargar datos de ingredientes: {e}")
 
 def cargar_productos(ruta_csv):
     """
@@ -91,9 +94,9 @@ def cargar_productos(ruta_csv):
                 )
                 db.session.merge(producto)  # Merge para evitar duplicados
         db.session.commit()
-        conditional_print("Datos de productos cargados correctamente.")
+        Config.conditional_print("Datos de productos cargados correctamente.")
     except Exception as e:
-        conditional_print(f"Error al cargar datos de productos: {e}")
+        Config.conditional_print(f"Error al cargar datos de productos: {e}")
 
 def cargar_productos_ingredientes(ruta_csv):
     """
@@ -111,11 +114,11 @@ def cargar_productos_ingredientes(ruta_csv):
                 ingrediente = Ingrediente.query.get(ingrediente_id)
 
                 if not producto:
-                    conditional_print(f"Producto con ID {producto_id} no encontrado. Saltando.")
+                    Config.conditional_print(f"Producto con ID {producto_id} no encontrado. Saltando.")
                     continue
 
                 if not ingrediente:
-                    conditional_print(f"Ingrediente con ID {ingrediente_id} no encontrado. Saltando.")
+                    Config.conditional_print(f"Ingrediente con ID {ingrediente_id} no encontrado. Saltando.")
                     continue
 
                 # Verificar si la relación ya existe
@@ -123,9 +126,9 @@ def cargar_productos_ingredientes(ruta_csv):
                     producto.ingredientes.append(ingrediente)
 
         db.session.commit()
-        conditional_print("Relaciones productos-ingredientes cargadas correctamente.")
+        Config.conditional_print("Relaciones productos-ingredientes cargadas correctamente.")
     except Exception as e:
-        conditional_print(f"Error al cargar relaciones productos-ingredientes: {e}")
+        Config.conditional_print(f"Error al cargar relaciones productos-ingredientes: {e}")
 
 def cargar_usuarios(ruta_csv):
     """
@@ -137,12 +140,12 @@ def cargar_usuarios(ruta_csv):
             for fila in lector:
                 usuario = Usuario(
                     username=fila["username"],
-                    password=bcrypt.generate_password_hash(fila["password"]).decode('utf-8'),
+                    password=fila["password"],
                     es_admin=fila["es_admin"].lower() == 'true',
                     es_empleado=fila["es_empleado"].lower() == 'true'
                 )
                 db.session.merge(usuario)  # Merge para evitar duplicados
         db.session.commit()
-        conditional_print("Datos de usuarios cargados correctamente.")
+        Config.conditional_print("Datos de usuarios cargados correctamente.")
     except Exception as e:
-        conditional_print(f"Error al cargar datos de usuarios: {e}")
+        Config.conditional_print(f"Error al cargar datos de usuarios: {e}")

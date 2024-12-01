@@ -6,11 +6,12 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
+    JWT_ACCESS_TOKEN_EXPIRES = os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 3600)
     APP_ENV = os.getenv('APP_ENV', 'development')
     ENABLE_PRINTS = os.getenv('ENABLE_PRINTS', 'false').lower() == 'true'
     TESTING = os.getenv('TESTING', 'false').lower() == 'true'
-    API_PREFIX = os.getenv('API_PREFIX', '/api')
-    
+    API_PREFIX = os.getenv('API_PREFIX', 'api')
+
     # Database Configuration
     NAME_DB = os.getenv('NAME_DB', 'heladeria')
 
@@ -24,3 +25,13 @@ class Config:
             f"{'test_' + Config.NAME_DB if Config.TESTING else Config.NAME_DB}.db"
         )
         return f"sqlite:///{db_path}"
+    
+    @staticmethod
+    def URLBuilder(metodo):
+        from flask import request
+        return f"{request.host_url.rstrip('/')}/{Config.API_PREFIX}/{metodo}"
+    
+    @staticmethod
+    def conditional_print(message):
+        if Config.ENABLE_PRINTS:
+            print(f" * {message}")

@@ -1,75 +1,133 @@
-from flask import render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from app.utils import requerir_rol_web, with_jwt
+from config import Config
 import requests
 
-def registrar_rutas_web(app):
-    """
-    Registra las rutas web directamente en la aplicación Flask.
-    """
-    # ------------------- Rutas para la Plataforma Web -------------------
+web = Blueprint('web', __name__)
 
-    @app.route('/')
-    def index():
-        """Página principal que muestra los primeros 4 productos desde¿ la API."""
-        try:
-            # Generar la URL completa para listar productos
-            api_url = f"{request.host_url}api/productos"
-            response = requests.get(api_url)
-            response.raise_for_status()
-            result = response.json()
-            productos = result["result"][:4]
-        except requests.RequestException:
-            flash("Error al obtener productos desde la API.", "danger")
-            productos = []
+@web.route('/')
+def index():
+    """
+    Página principal que muestra los primeros 4 productos.
+    """
+    try:
+        api_url = Config.URLBuilder("productos")
+        response = requests.get(api_url)
+        response.raise_for_status()
+        productos = response.json().get("result", [])[:4]
         return render_template('index.html', productos=productos)
+    except Exception as e:
+        flash("No se pudieron cargar los productos principales. Inténtalo de nuevo más tarde.", "danger")
+        return render_template('error.html', message="Error al cargar los productos principales.")
 
-    @app.route('/ingredientes')
-    def ingredientes():
-        """Página que muestra todos los ingredientes desde la API."""
-        try:
-            api_url = f"{request.host_url}api/ingredientes"
-            response = requests.get(api_url)
-            response.raise_for_status()
-            ingredientes = response.json()["result"]
-        except requests.RequestException:
-            flash("Error al obtener ingredientes desde la API.", "danger")
-            ingredientes = []
+@web.route('/ingredientes')
+@requerir_rol_web('admin', 'empleado')
+def web_ingredientes():
+    """
+    Página que muestra todos los ingredientes.
+    """
+    try:
+        api_url = Config.URLBuilder("ingredientes")
+        response = requests.get(api_url)
+        response.raise_for_status()
+        ingredientes = response.json().get("result", [])
         return render_template('ingredientes.html', ingredientes=ingredientes)
+    except Exception as e:
+        flash("No se pudieron cargar los ingredientes. Inténtalo de nuevo más tarde.", "danger")
+        return render_template('error.html', message="Error al cargar los ingredientes.")
 
-    @app.route('/productos')
-    def productos():
-        """Página que muestra todos los productos desde la API."""
-        try:
-            api_url = f"{request.host_url}api/productos"
-            response = requests.get(api_url)
-            response.raise_for_status()
-            productos = response.json()["result"]
-        except requests.RequestException:
-            flash("Error al obtener productos desde la API.", "danger")
-            productos = []
+@web.route('/productos')
+def web_productos():
+    """
+    Página que muestra todos los productos.
+    """
+    try:
+        api_url = Config.URLBuilder("productos")
+        response = requests.get(api_url)
+        response.raise_for_status()
+        productos = response.json().get("result", [])
         return render_template('productos.html', productos=productos)
+    except Exception as e:
+        flash("No se pudieron cargar los productos. Inténtalo de nuevo más tarde.", "danger")
+        return render_template('error.html', message="Error al cargar los productos.")
 
-    @app.route('/vender')
-    def lista_para_vender():
-        """Página que muestra productos disponibles para vender desde la API."""
-        try:
-            api_url = f"{request.host_url}api/productos"
-            response = requests.get(api_url)
-            response.raise_for_status()
-            productos = response.json()["result"]
-        except requests.RequestException:
-            flash("Error al obtener productos desde la API.", "danger")
-            productos = []
+@web.route('/vender')
+@with_jwt
+@requerir_rol_web('admin', 'empleado', 'cliente')
+def web_lista_para_vender():
+    """
+    Página que muestra los productos disponibles para la venta.
+    """
+    try:
+        api_url = Config.URLBuilder("productos")
+        response = requests.get(api_url)
+        response.raise_for_status()
+        productos = response.json().get("result", [])
         return render_template('vender.html', productos=productos)
+    except Exception as e:
+        flash("No se pudieron cargar los productos para la venta. Inténtalo de nuevo más tarde.", "danger")
+        return render_template('error.html', message="Error al cargar los productos para la venta.")
 
-    @app.route('/vender/<int:id>', methods=['POST'])
-    def vender(id):
-        """Procesa la venta de un producto utilizando la API."""
+@web.route('/vender/<int:id>', methods=['POST'])
+@with_jwt
+@requerir_rol_web('admin', 'empleado', 'cliente')
+def web_vender_producto(id):
+    """
+    Procesa la venta de un producto.
+    """
+    try:
+        api_url = Config.URLBuilder(f"productos/vender/{id}")
+        response = requests.post(api_url)
+        response.raise_for_status()
+        flash("Producto vendido exitosamente.", "success")
+        return redirect(url_for('web.web_lista_para_vender'))
+    except Exception as e:
+        flash(f"Error al vender el producto con ID {id}: {e}", "danger")
+        return render_template('error.html', message=f"Error al vender el producto con ID {id}.")
+
+@web.route('/login', methods=['GET', 'POST'])
+def web_login():
+    """
+    Página de inicio de sesión.
+    """
+    if request.method == 'POST':
+        username = request.form.get("username")
+        password = request.form.get("password")
         try:
-            api_url = f"{request.host_url}api/productos/{id}/vender"
-            response = requests.post(api_url)
+            api_url = Config.URLBuilder("login")
+            response = requests.post(api_url, json={"username": username, "password": password})
             response.raise_for_status()
-            result = response.json()["result"]
-            flash(f"Producto con ID {id} vendido exitosamente.", "success")
-        except requests.RequestException:
-            flash(f"Error al vender el producto con ID {id}.", "danger")
-        return redirect(url_for('lista_para_vender'))
+
+            # Guardar el token JWT en la sesión
+            session['jwt'] = response.json().get("access_token")
+            flash("Inicio de sesión exitoso.", "success")
+            return redirect(url_for('web.index'))
+        except Exception as e:
+            flash("Error al iniciar sesión. Por favor, verifica tus credenciales.", "danger")
+            return render_template('error.html', message="Error al iniciar sesión.")
+    return render_template('login.html')
+
+@web.route('/logout')
+def web_logout():
+    """
+    Cierra la sesión del usuario.
+    """
+    session.clear()
+    flash("Sesión cerrada correctamente.", "success")
+    return redirect(url_for('web.index'))
+
+@web.route('/error')
+def web_error():
+    """
+    Página genérica de error.
+    """
+    message = request.args.get("message", "Ha ocurrido un error inesperado.")
+    return render_template('error.html', message=message)
+
+@web.route('/unauthorized')
+def unauthorized():
+    return render_template('error.html', error_code=401, message="Acceso denegado."), 401
+
+@web.route('/forbidden')
+def forbidden():
+    return render_template('error.html', error_code=403, message="No tienes permisos para acceder."), 403

@@ -1,7 +1,8 @@
 from flask import Flask
 from config import Config
-from app.extensions import db, bcrypt
-from app.utils import conditional_print
+from app.extensions import initialize_extensions
+from app.api_routes import api
+from app.web_routes import web
 
 def create_app():
     """
@@ -12,25 +13,22 @@ def create_app():
     app.config.from_object(Config)
 
     app.secret_key = Config.SECRET_KEY
+    app.config['JWT_SECRET_KEY'] = Config.SECRET_KEY
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['SQLALCHEMY_DATABASE_URI'] = Config.database_uri()
-    conditional_print(f"Final SQLALCHEMY_DATABASE_URI: {Config.database_uri()}")
+    Config.conditional_print(f"Final SQLALCHEMY_DATABASE_URI: {Config.database_uri()}")
     
     # Inicializar extensiones
-    db.init_app(app)
-    conditional_print("SQLAlchemy initialized successfully.")
-
-    bcrypt.init_app(app)
-    conditional_print("BCrypt initialized successfully.")
+    initialize_extensions(app)
 
     with app.app_context():
-        from app.api_routes import registrar_rutas_api
-        from app.web_routes import registrar_rutas_web
+        app.register_blueprint(api) # Para la API
+        Config.conditional_print("Api Blueprint Registered successfully.")
+        app.register_blueprint(web) # Para la Heladeria
+        Config.conditional_print("Web Blueprint Registered successfully.")
 
-        registrar_rutas_api(app)
-        registrar_rutas_web(app)
-    
         from app.data_loader import inicializar_base_de_datos
         inicializar_base_de_datos()
 
