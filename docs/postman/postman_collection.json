@@ -1,0 +1,1081 @@
+{
+	"info": {
+		"_postman_id": "50b4667d-1cd3-41a0-9d05-7145ab37e665",
+		"name": "Proyecto Final",
+		"description": "API para gestionar un sistema de heladería. Incluye endpoints para consultar, actualizar y administrar productos, ingredientes e inventarios.\n\nCaracterísticas principales:\n\n- Gestión de productos: calorías, rentabilidad, costos, etc.\n    \n- Gestión de ingredientes: búsqueda, consulta y estado saludable.\n    \n- Administración de inventario: reabastecimiento y renovación.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7830517"
+	},
+	"item": [
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Consultar todos los productos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar un producto por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "20",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/20",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"20"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "15",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/15",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"15"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Consultar un producto por nombre",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/buscar?nombre=",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Helado de Chocolate",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/buscar?nombre=Helado de Chocolate",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"buscar"
+									],
+									"query": [
+										{
+											"key": "nombre",
+											"value": "Helado de Chocolate"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Helado de Vainilla",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/buscar?nombre=Helado de Vainilla",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"buscar"
+									],
+									"query": [
+										{
+											"key": "nombre",
+											"value": "Helado de Vainilla"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Consultar calorías de un producto\n",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/calorias/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								"calorias",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "2",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/calorias/2",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"calorias",
+										"2"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "5",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/calorias/5",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"calorias",
+										"5"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Consultar rentabilidad de un producto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/rentabilidad",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								"rentabilidad"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "20",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/rentabilidad/20",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"rentabilidad",
+										"20"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "25",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/rentabilidad/25",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"rentabilidad",
+										"25"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Consultar costo de producción de un producto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/costo/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								"costo",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "20",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/costo/20",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"costo",
+										"20"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "25",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/costo/25",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"costo",
+										"25"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Vender un Producto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cantidad\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/vender/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								"vender",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "10_1",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cantidad\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/vender/10",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"vender",
+										"10"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "11_3",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cantidad\": 3\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/vender/11",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"vender",
+										"11"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			],
+			"description": "Endpoints para gestionar los productos del sistema. Permiten consultar productos, calcular propiedades específicas como calorías o costos, y vender productos.\n\n##### Métodos:\n\n1. **`GET`** **Consultar todos los productos**  \n    Recupera la lista completa de productos disponibles en el sistema.\n    \n    - **Parámetros**: Ninguno.\n        \n    - **Respuesta**: Lista de productos con detalles como nombre, precio, tipo y calorías.\n        \n\n---\n\n1. **`GET`** **Consultar un producto por ID**  \n    Busca un producto específico usando su ID.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del producto a buscar.\n            \n    - **Respuesta**: Información detallada del producto, incluyendo ingredientes y calorías.\n        \n\n---\n\n1. **`GET`** **Consultar un producto por nombre**  \n    Busca productos cuyo nombre coincida parcial o totalmente con el valor proporcionado.\n    \n    - **Parámetros**:\n        \n        - `nombre` (string): Nombre o parte del nombre del producto a buscar (query parameter).\n            \n    - **Respuesta**: Lista de productos que coinciden con el nombre.\n        \n\n---\n\n1. **`GET`** **Consultar calorías de un producto**  \n    Calcula el total de calorías de un producto sumando las calorías de sus ingredientes.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del producto a consultar.\n            \n    - **Respuesta**: Calorías totales del producto.\n        \n\n---\n\n1. **`GET`** **Consultar rentabilidad de un producto**  \n    Obtiene la rentabilidad de un producto basado en su costo de producción y precio de venta.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del producto a consultar.\n            \n    - **Respuesta**: Rentabilidad calculada del producto.\n        \n\n---\n\n1. **`GET`** **Consultar costo de producción de un producto**  \n    Calcula el costo total de producción de un producto en función de los costos de sus ingredientes.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del producto a consultar.\n            \n    - **Respuesta**: Costo total del producto.\n        \n\n---\n\n1. **`POST`** **Vender un producto**  \n    Marca un producto como vendido, disminuyendo el inventario de sus ingredientes asociados.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del producto a vender (ruta).\n            \n    - **Respuesta**: Confirmación de la venta y estado actualizado del inventario."
+		},
+		{
+			"name": "Ingredientes",
+			"item": [
+				{
+					"name": "Consultar Todos los Ingredientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/ingredientes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"ingredientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar un ingrediente por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/ingredientes/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"ingredientes",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "20",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/ingredientes/20",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"ingredientes",
+										"20"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "15",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/ingredientes/15",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"ingredientes",
+										"15"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Consultar un producto por nombre Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/ingredientes/buscar?nombre=",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"ingredientes",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Miel",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/ingredientes/buscar?nombre=Miel",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"ingredientes",
+										"buscar"
+									],
+									"query": [
+										{
+											"key": "nombre",
+											"value": "Miel"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Nueces",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/ingredientes/buscar?nombre=Nueces",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"ingredientes",
+										"buscar"
+									],
+									"query": [
+										{
+											"key": "nombre",
+											"value": "Nueces"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Consultar Ingrediente Sano por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/ingredientes/sano/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"ingredientes",
+								"sano",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "1",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/ingredientes/sano/1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"ingredientes",
+										"sano",
+										"1"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "10",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/ingredientes/sano/10",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"ingredientes",
+										"sano",
+										"10"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			],
+			"description": "Endpoints para gestionar los ingredientes del sistema. Permiten consultar ingredientes específicos o generales y verificar si un ingrediente es saludable.\n\n##### Métodos:\n\n1. **`GET`** **Consultar todos los ingredientes**  \n    Recupera la lista completa de ingredientes disponibles en el sistema.\n    \n    - **Parámetros**: Ninguno.\n        \n    - **Respuesta**: Lista de ingredientes con detalles como nombre, calorías y precio.\n        \n\n---\n\n1. **`GET`** **Consultar un ingrediente por ID**  \n    Busca un ingrediente específico usando su ID.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del ingrediente a consultar.\n            \n    - **Respuesta**: Detalles del ingrediente, incluyendo nombre, calorías y si es saludable.\n        \n\n---\n\n1. **`GET`** **Consultar un ingrediente por nombre**  \n    Busca ingredientes cuyo nombre coincida parcial o totalmente con el valor proporcionado.\n    \n    - **Parámetros**:\n        \n        - `nombre` (string): Nombre o parte del nombre del ingrediente (query parameter).\n            \n    - **Respuesta**: Lista de ingredientes que coinciden con el nombre.\n        \n\n---\n\n1. **`GET`** **Consultar si un ingrediente es sano por ID**  \n    Verifica si un ingrediente específico se considera saludable.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del ingrediente a consultar.\n            \n    - **Respuesta**: `true` si es saludable, `false` en caso contrario."
+		},
+		{
+			"name": "Inventario",
+			"item": [
+				{
+					"name": "Reabastecer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cantidad\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/reabastecer/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								"reabastecer",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "3_1200",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cantidad\": 1200\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/reabastecer/3",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"reabastecer",
+										"3"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "13_200",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cantidad\": 200\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/reabastecer/13",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"reabastecer",
+										"13"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Renovar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cantidad\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/productos/renovar/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"productos",
+								"renovar",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "21_50",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cantidad\": 50\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/renovar/21",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"renovar",
+										"21"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "25_15",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cantidad\": 15\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/productos/renovar/25",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"productos",
+										"renovar",
+										"25"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			],
+			"description": "Endpoints para gestionar el inventario de los ingredientes asociados a los productos, ya sea incrementando las cantidades o reemplazándolas por nuevas.\n\n##### Métodos:\n\n1. **`POST`** **Reabastecer**  \n    Incrementa el inventario de los ingredientes asociados a un producto en una cantidad específica.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del producto a reabastecer (ruta).\n            \n        - `cantidad` (entero): Cantidad a incrementar en cada ingrediente (body).\n            \n    - **Respuesta**: Cambios en el inventario antes y después del reabastecimiento.\n        \n\n---\n\n1. **`POST`** **Renovar**  \n    Establece el inventario de los ingredientes asociados a un producto en un valor específico, ignorando el inventario anterior.\n    \n    - **Parámetros**:\n        \n        - `id` (entero): ID del producto a renovar (ruta).\n            \n        - `cantidad` (entero): Cantidad fija para establecer en cada ingrediente (body).\n            \n    - **Respuesta**: Cambios en el inventario antes y después de la renovación."
+		}
+	]
+}
