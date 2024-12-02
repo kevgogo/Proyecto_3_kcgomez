@@ -14,7 +14,7 @@
     <div class="container mt-4">
         {% include '_flashes.html' %}
 
-        <h1 class="text-center">¡Bienvenido a la Heladería!</h1>
+        <h1 class="text-center">¡Bienvenido a la Heladería!{{ ", " + usuario_nombre if usuario_nombre else "" }}</h1>
         <p class="text-center text-muted">Disfruta de nuestros productos más populares.</p>
 
         <div class="row mt-4">

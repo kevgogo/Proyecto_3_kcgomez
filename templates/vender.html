@@ -29,8 +29,8 @@
   <div class="container mt-4">
     {% include '_flashes.html' %}
 
-    <h1 class="text-center">Lista de Productos para Vender</h1>
-    <p class="text-center text-muted">Selecciona un producto para realizar la venta.</p>
+    <h1 class="text-center">Lista de Productos para {{ "Comprar" if usuario_rol == "cliente" else "Vender" }}</h1>
+    <p class="text-center text-muted">Selecciona un producto para realizar la {{ "compra" if usuario_rol == "cliente" else "venta" }}.</p>
 
     <div class="row scrollable-cards mt-4">
       {% for producto in productos %}
@@ -38,18 +38,31 @@
         <div class="card mb-4">
           <div class="card-body">
             <h5 class="card-title">{{ producto.nombre }}</h5>
-            {% if usuario_rol != "empleado" %}
+
+            <!-- Mostrar precio solo a admin y empleado -->
+            {% if usuario_rol in ["admin", "empleado"] %}
             <p class="card-text"><strong>Precio:</strong> ${{ producto.precio_publico }}</p>
             {% endif %}
+
+            <!-- Mostrar calorías a todos -->
+            <p class="card-text"><strong>Calorías:</strong> {{ producto.calorias }}</p>
+
+            <!-- Mostrar stock solo a admin y empleado -->
+            {% if usuario_rol in ["admin", "empleado"] %}
             <p class="card-text"><strong>Stock Suficiente:</strong>
               {{ "Sí" if producto.stock_suficiente else "No" }}
             </p>
+            {% endif %}
+
+            <!-- Botón dinámico según el rol -->
+            {% if usuario_rol in ["admin", "empleado", "cliente"] %}
             <form action="/vender/{{ producto.id }}" method="POST">
               <button class="btn btn-success btn-sm" type="submit" {% if not producto.stock_suficiente %}disabled{%
                 endif %}>
-                Vender
+                {{ "Comprar" if usuario_rol == "cliente" else "Vender" }}
               </button>
             </form>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -57,7 +70,7 @@
       <p class="text-center text-muted">No hay productos disponibles para la venta en este momento.</p>
       {% endfor %}
     </div>
-    
+
     {%include '_buttonery.html' %}
 
     <footer class="text-center mt-5">

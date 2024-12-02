@@ -1,7 +1,12 @@
 <div class="text-center mt-4">
   {% if usuario_autenticado %}
   <!-- Si el usuario está autenticado -->
+  {% if usuario_rol in ["admin", "empleado"] %}
   <a href="{{ url_for('web.dashboard') }}" class="btn btn-primary">Volver al Dashboard</a>
+  {% else %}
+  <!-- Si el usuario no está autenticado -->
+  <a href="{{ url_for('web.index') }}" class="btn btn-primary">Volver al Inicio</a>
+  {% endif %}
   {% else %}
   <!-- Si el usuario no está autenticado -->
   <a href="{{ url_for('web.index') }}" class="btn btn-primary">Volver al Inicio</a>

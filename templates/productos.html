@@ -25,8 +25,11 @@
             <th>ID</th>
             <th>Nombre</th>
             <th>Calorías</th>
-            {% if usuario_rol != "empleado" %}
+            {% if usuario_rol in ["admin", "empleado"] %}
             <th>Precio</th>
+            {% endif %}
+            {% if usuario_rol == "admin" %}
+            <th>Rentabilidad</th>
             {% endif %}
             <th>Tipo</th>
           </tr>
@@ -37,8 +40,11 @@
             <td>{{ producto.id }}</td>
             <td>{{ producto.nombre }}</td>
             <td>{{ producto.calorias }}</td>
-            {% if usuario_rol != "empleado" %}
+            {% if usuario_rol in ["admin", "empleado"] %}
             <td>${{ producto.precio_publico }}</td>
+            {% endif %}
+            {% if usuario_rol == "admin" %}
+            <td>${{ producto.rentabilidad }}</td>
             {% endif %}
             <td>{{ producto.tipo }}</td>
           </tr>

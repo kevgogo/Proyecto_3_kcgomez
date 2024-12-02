@@ -1,5 +1,7 @@
+import json
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from app.utils import injectar_jwt_headers, requerir_rol_web, with_jwt_web
+from flask_jwt_extended import decode_token
+from app.utils import injectar_jwt_headers, requerir_rol_web, validar_jwt, with_jwt_web
 from config import Config
 import requests
 
@@ -86,7 +88,11 @@ def web_vender_producto(id, **kwargs):
         headers = kwargs.get('headers', {})
         response = requests.post(api_url, headers=headers)
         response.raise_for_status()
-        flash("Producto vendido exitosamente.", "success")
+        usuario_rol = session.get('usuario_rol')
+        if usuario_rol == "cliente":
+            flash("Producto comprado exitosamente.", "success")
+        else:
+            flash("Producto vendido exitosamente.", "success")
         return redirect(url_for('web.web_lista_para_vender'))
     except Exception as e:
         flash(f"Error al vender el producto con ID {id}: {e}", "danger")
@@ -107,8 +113,20 @@ def web_login():
 
             # Guardar el token JWT en la sesión
             session['jwt'] = response.json().get("access_token")
-            flash("Inicio de sesión exitoso.", "success")
-            return redirect(url_for('web.dashboard'))
+
+            token = session.get('jwt')
+            if not token:
+                # Renderizar directamente el error
+                return render_template('error.html', error_code=401, message="No estás autenticado."), 401
+            if token and validar_jwt(token):
+                flash("Inicio de sesión exitoso.", "success")
+
+                decoded = decode_token(token)
+                user = json.loads(decoded.get('sub'))
+                session['usuario_rol'] = user.get('rol')
+                if user.get('rol') in ["admin", "empleado"]:
+                    return redirect(url_for('web.dashboard'))
+                return redirect(url_for('web.index'))
         except Exception as e:
             flash("Error al iniciar sesión. Por favor, verifica tus credenciales.", "danger")
             return redirect(url_for('web.web_login', message="Error al iniciar sesión."))
@@ -160,7 +178,6 @@ def dashboard(**kwargs):
         Config.conditional_print(str(e))
         return redirect(url_for('web.web_login', error_code=500, message=str(e)), 500)
 
-
 @web.route('/logout')
 def web_logout():
     """
@@ -169,3 +186,46 @@ def web_logout():
     session.clear()
     flash("Sesión cerrada correctamente.", "success")
     return redirect(url_for('web.index'))
+
+@web.route('/registro', methods=['GET', 'POST'])
+def web_register():
+    """
+    Maneja el registro de nuevos usuarios desde la interfaz web.
+    """
+    if request.method == 'POST':
+        try:
+            # Obtener datos del formulario
+            username = request.form.get('username')
+            password = request.form.get('password')
+            confirm_password = request.form.get('confirm_password')
+            rol = request.form.get('rol')
+
+            # Validar contraseñas coinciden
+            if password != confirm_password:
+                flash("Las contraseñas no coinciden.", "danger")
+                return render_template('registro.html')
+
+            # Validar datos completos
+            if not username or not password or not rol:
+                flash("Por favor, completa todos los campos.", "warning")
+                return render_template('registro.html')
+
+            # Enviar datos a la API de registro
+            api_url = Config.URLBuilder("/usuarios/registro")
+            response = requests.post(api_url, json={
+                "username": username,
+                "password": password,
+                "rol": rol
+            })
+            response.raise_for_status()
+
+            # Confirmar el registro
+            flash("Registro exitoso. Ahora puedes iniciar sesión.", "success")
+            return redirect(url_for('web.web_login'))
+        except Exception as e:
+            # Manejar errores de la API o conexión
+            flash(f"Error al registrar usuario: {e}", "danger")
+            return render_template('registro.html')
+
+    # Si es GET, renderizar formulario de registro
+    return render_template('registro.html')

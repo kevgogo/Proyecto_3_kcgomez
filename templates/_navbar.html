@@ -19,7 +19,7 @@
         {% endif %}
 
         {% if usuario_rol in ["admin", "empleado", "cliente"] %}
-        <li class="nav-item"><a class="nav-link" href="/vender">Vender</a></li>
+        <li class="nav-item"><a class="nav-link" href="/vender">{{ "Comprar" if usuario_rol == "cliente" else "Vender" }}</a></li>
         {% endif %}
 
         {% if usuario_autenticado %}

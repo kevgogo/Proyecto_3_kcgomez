@@ -15,6 +15,10 @@ class Usuario(db.Model):
         self.es_admin = es_admin
         self.es_empleado = es_empleado
 
+    def _guardar_cambios(self):
+        if hasattr(db, 'session'):
+            db.session.commit()
+
     def verificar_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
 
@@ -25,3 +29,7 @@ class Usuario(db.Model):
             return 'empleado'
         else:
             return 'cliente'
+
+    def registrar_usuario(self):
+        db.session.add(self)
+        self._guardar_cambios()

@@ -256,3 +256,46 @@ class HeladeriaController:
                 "productos_mas_vendidos": productos_mas_vendidos_data
             }
         }, 200
+
+
+    @staticmethod
+    @manejar_errores
+    def registro_usuario(username, password, rol):
+        """
+        Maneja el registro de nuevos usuarios.
+        """
+        try:
+            user = username
+            user_pass = password
+            role = rol
+            es_admin = False
+            es_empleado = False
+
+            # Validar datos completos
+            if not user or not user_pass or not role:
+                return {
+                    "message": "Datos incompletos.",
+                    "result": {}
+                }, 400
+
+            # Validar rol y establecer permisos
+            if role == "admin":
+                es_admin = True
+            elif role == "empleado":
+                es_empleado = True
+            elif role != "cliente":
+                return {
+                    "message": "Rol inválido. Debe ser 'admin', 'empleado' o 'cliente'.",
+                    "result": {}
+                }, 400
+
+            # Aquí agregar lógica para guardar en la base de datos
+            nuevo_usuario = Usuario(username=user, password=user_pass, es_admin=es_admin, es_empleado=es_empleado)
+            nuevo_usuario.registrar_usuario()
+
+            return {
+                "message": "Usuario registrado exitosamente.",
+                "result": {}
+            }, 201
+        except Exception as e:
+            return {"error": f"Error al registrar usuario: {str(e)}"}, 500

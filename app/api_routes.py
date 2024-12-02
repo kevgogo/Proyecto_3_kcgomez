@@ -180,3 +180,14 @@ def dashboard_estadisticas():
     """
     response, status = HeladeriaController.obtener_estadisticas_generales()
     return jsonify(response), status
+
+@api.route('/usuarios/registro', methods=['POST'])
+def api_registro_usuario():
+    """
+    Endpoint para registrar nuevos usuarios.
+    """
+    username = request.json.get("username")
+    password = request.json.get("password")
+    rol = request.json.get("rol")
+    response, status = HeladeriaController.registro_usuario(username, password, rol)
+    return jsonify(response), status
