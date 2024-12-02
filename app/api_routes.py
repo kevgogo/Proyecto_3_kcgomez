@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 from config import Config
 from controllers.heladeria_controler import HeladeriaController
 from app.extensions import bcrypt
-from app.utils import requerir_rol_api, with_jwt
+from app.utils import requerir_rol_api, with_jwt_api
 from models.usuario import Usuario
 
 API_PREFIX = Config.API_PREFIX
@@ -46,7 +46,7 @@ def listar_productos():
     return jsonify(response), status
 
 @api.route('/productos/<int:id>', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def obtener_producto_por_id(id):
     """
@@ -56,7 +56,7 @@ def obtener_producto_por_id(id):
     return jsonify(response), status
 
 @api.route('/productos/buscar', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def buscar_producto_por_nombre():
     """
@@ -67,7 +67,7 @@ def buscar_producto_por_nombre():
     return jsonify(response), status
 
 @api.route('/productos/calorias/<int:id>', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado', 'cliente')
 def obtener_calorias_producto(id):
     """
@@ -77,7 +77,7 @@ def obtener_calorias_producto(id):
     return jsonify(response), status
 
 @api.route('/productos/rentabilidad/<int:id>', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin')
 def obtener_rentabilidad_producto(id):
     """
@@ -87,7 +87,7 @@ def obtener_rentabilidad_producto(id):
     return jsonify(response), status
 
 @api.route('/productos/costo/<int:id>', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def obtener_costo_producto(id):
     """
@@ -97,7 +97,7 @@ def obtener_costo_producto(id):
     return jsonify(response), status
 
 @api.route('/productos/vender/<int:id>', methods=['POST'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado', 'cliente')
 def vender_producto_por_id(id):
     """
@@ -107,7 +107,7 @@ def vender_producto_por_id(id):
     return jsonify(response), status
 
 @api.route('/productos/reabastecer/<int:id>', methods=['POST'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def reabastecer_producto(id):
     """
@@ -118,7 +118,7 @@ def reabastecer_producto(id):
     return jsonify(response), status
 
 @api.route('/productos/renovar/<int:id>', methods=['POST'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def renovar_inventario_producto(id):
     """
@@ -131,7 +131,7 @@ def renovar_inventario_producto(id):
 # ------------------- Rutas para Ingredientes -------------------
 
 @api.route('/ingredientes', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def listar_ingredientes():
     """
@@ -141,7 +141,7 @@ def listar_ingredientes():
     return jsonify(response), status
 
 @api.route('/ingredientes/<int:id>', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def obtener_ingrediente_por_id(id):
     """
@@ -151,7 +151,7 @@ def obtener_ingrediente_por_id(id):
     return jsonify(response), status
 
 @api.route('/ingredientes/buscar', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def buscar_ingrediente_por_nombre():
     """
@@ -162,7 +162,7 @@ def buscar_ingrediente_por_nombre():
     return jsonify(response), status
 
 @api.route('/ingredientes/sano/<int:id>', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def es_ingrediente_sano(id):
     """
@@ -172,7 +172,7 @@ def es_ingrediente_sano(id):
     return jsonify(response), status
 
 @api.route('/dashboard/estadisticas', methods=['GET'])
-@with_jwt
+@with_jwt_api
 @requerir_rol_api('admin', 'empleado')
 def dashboard_estadisticas():
     """

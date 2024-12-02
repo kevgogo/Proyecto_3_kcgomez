@@ -9,7 +9,7 @@ def es_solicitud_api():
     """
     Determina si la solicitud actual es para una API.
     """
-    return request.path.startswith('/api') or request.content_type == 'application/json'
+    return request.path.startswith('/api') or request.content_type == 'application/json' or "Authorization" in request.headers
 
 def manejar_errores(func):
     """
@@ -23,24 +23,6 @@ def manejar_errores(func):
             return jsonify({"message": str(ve), "result": None}), 400
         except Exception as e:
             return jsonify({"message": f"Error inesperado en {func.__name__}: {e}", "result": None}), 500
-    return wrapper
-
-def with_jwt(func):
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if "Authorization" in request.headers:  # Caso de uso en API
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                return redirect(url_for('web.error', error_code=401, message="Token inválido o no proporcionado."))
-        else:  # Caso de uso en vistas web
-            token = session.get('jwt')
-            if not token:
-                return redirect(url_for('web.error', error_code=401, message="No estás autenticado."))
-            if not validar_jwt(token):
-                return redirect(url_for('web.error', error_code=401, message="Token inválido o expirado."))
-            return func(*args, **kwargs)
     return wrapper
 
 def validar_jwt(token):
@@ -58,6 +40,36 @@ def validar_jwt(token):
         session.clear()
         flash("Token inválido. Por favor, inicia sesión de nuevo.", "danger")
         return False
+    
+def with_jwt_api(func):
+    """
+    Decorador para validar el token JWT en solicitudes API.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        token = request.headers.get('Authorization', None)
+        if not token and not token.startswith('Bearer '):
+            return {"error": "Token inválido", "message": "El token proporcionado no es válido o ha expirado."}, 401
+        if not validar_jwt(token.split(' ')[1]):
+            return {"error": "Token inválido", "message": "El token proporcionado no es válido o ha expirado."}, 401
+        return func(*args, **kwargs)
+    return wrapper
+
+def with_jwt_web(func):
+    """
+    Decorador para validar el token JWT en solicitudes web.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        token = session.get('jwt')
+        if not token:
+            # Redirigir a la página de error si el token no está presente
+            return render_template('error.html', error_code=401, message="No estás autenticado."), 401
+        if not validar_jwt(token):
+            # Redirigir a la página de error si el token es inválido
+            return render_template('error.html', error_code=401, message="Token inválido o expirado."), 401
+        return func(*args, **kwargs)
+    return wrapper
 
 def requerir_rol_api(*roles):
     """
@@ -84,13 +96,12 @@ def requerir_rol_web(*roles):
         def envoltura(*args, **kwargs):
             token = session.get('jwt')
             if not token:
-                # Renderizar la página de error para usuario no autenticado
+                # Renderizar directamente el error
                 return render_template('error.html', error_code=401, message="No estás autenticado."), 401
             if token and validar_jwt(token):
                 decoded = decode_token(token)
                 user = json.loads(decoded.get('sub'))
                 if user.get('rol') not in roles:
-                    # Renderizar la página de error para usuario sin permisos
                     return render_template('error.html', error_code=403, message="Acceso denegado."), 403
             return f(*args, **kwargs)
         return envoltura
@@ -106,7 +117,7 @@ def injectar_jwt_headers(func):
         token = session.get('jwt')
         if not token:
             flash("No estás autenticado. Por favor, inicia sesión.", "danger")
-            return redirect(url_for('web.web_error'))
+            return redirect(url_for('web.web_login'))
         
         try:
             # Decodificar el token para verificar su validez
@@ -127,17 +138,5 @@ def injectar_jwt_headers(func):
             "Authorization": f"Bearer {token}"
         }
 
-        return func(*args, **kwargs)
-    return wrapper
-
-def cerrar_sesion_al_fallar(func):
-    """
-    Decorador para cerrar sesión automáticamente cuando se accede a rutas de error.
-    """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        # Limpiar la sesión
-        session.clear()
-        flash("Tu sesión ha sido cerrada debido a un error o falta de autorización.", "warning")
         return func(*args, **kwargs)
     return wrapper
