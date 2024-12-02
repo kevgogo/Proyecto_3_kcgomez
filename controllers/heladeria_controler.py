@@ -1,7 +1,7 @@
 from flask_jwt_extended import get_jwt_identity
 from app.extensions import db
 from models.producto import Producto
-from models.ingrediente import Ingrediente
+from models.ingrediente import Ingrediente, Base, Complemento
 from models.usuario import Usuario
 from app.utils import manejar_errores
 
@@ -124,14 +124,22 @@ class HeladeriaController:
 
         resultado = []
         for ingrediente in producto.ingredientes:
-            cantidad_anterior = ingrediente.cantidad
-            ingrediente.abastecer(cantidad)
-            resultado.append({
-                "ingrediente_id": ingrediente.id,
-                "ingrediente_nombre": ingrediente.nombre,
-                "cantidad_anterior": cantidad_anterior,
-                "cantidad_actual": ingrediente.cantidad
-            })
+            try:
+                cantidad_anterior = ingrediente.inventario
+                if not isinstance(ingrediente, (Base, Complemento)):
+                    raise AttributeError(f"El ingrediente con ID {ingrediente.id} no soporta la operación 'abastecer'.")
+                ingrediente.abastecer(cantidad)
+                resultado.append({
+                    "ingrediente_id": ingrediente.id,
+                    "ingrediente_nombre": ingrediente.nombre,
+                    "cantidad_anterior": cantidad_anterior,
+                    "cantidad_actual": ingrediente.inventario
+                })
+            except Exception as e:
+                resultado.append({
+                    "ingrediente_id": ingrediente.id,
+                    "error": str(e)
+                })
 
         db.session.commit()
         return {
@@ -143,7 +151,7 @@ class HeladeriaController:
     @manejar_errores
     def renovar_inventario_producto(id, cantidad):
         """
-        Renueva el inventario de los ingredientes de un producto.
+        Renueva los ingredientes de un producto.
         """
         producto = Producto.query.get(id)
         if not producto:
@@ -154,18 +162,26 @@ class HeladeriaController:
 
         resultado = []
         for ingrediente in producto.ingredientes:
-            cantidad_anterior = ingrediente.cantidad
-            ingrediente.renovar_inventario(cantidad)
-            resultado.append({
-                "ingrediente_id": ingrediente.id,
-                "ingrediente_nombre": ingrediente.nombre,
-                "cantidad_anterior": cantidad_anterior,
-                "cantidad_actual": ingrediente.cantidad
-            })
+            try:
+                cantidad_anterior = ingrediente.inventario
+                if not isinstance(ingrediente, (Base, Complemento)):
+                    raise AttributeError(f"El ingrediente con ID {ingrediente.id} no soporta la operación 'renovar'.")
+                ingrediente.renovar_inventario(cantidad)
+                resultado.append({
+                    "ingrediente_id": ingrediente.id,
+                    "ingrediente_nombre": ingrediente.nombre,
+                    "cantidad_anterior": cantidad_anterior,
+                    "cantidad_actual": ingrediente.inventario
+                })
+            except Exception as e:
+                resultado.append({
+                    "ingrediente_id": ingrediente.id,
+                    "error": str(e)
+                })
 
         db.session.commit()
         return {
-            "message": f"Inventario del producto '{producto.nombre}' renovado.",
+            "message": f"Producto '{producto.nombre}' renovado.",
             "result": resultado
         }, 200
 
@@ -176,9 +192,10 @@ class HeladeriaController:
         Lista todos los ingredientes disponibles.
         """
         ingredientes = Ingrediente.query.all()
+        resultado = [ingrediente.to_dict() for ingrediente in ingredientes]
         return {
             "message": "Lista de ingredientes obtenida exitosamente.",
-            "result": [ingrediente.to_dict() for ingrediente in ingredientes]
+            "result": resultado
         }, 200
 
     @staticmethod

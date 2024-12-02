@@ -1,26 +1,26 @@
-id,nombre,precio,calorias,inventario,es_vegetariano
-1,Leche,1.5,42,50,True
-2,Crema de Leche,2.5,210,20,True
-3,Azúcar,0.8,400,100,True
-4,Cacao en Polvo,3.0,250,30,True
-5,Vainilla,5.0,20,10,True
-6,Fresas,4.0,35,15,True
-7,Mango,3.5,60,25,True
-8,Chocolate,4.5,540,10,True
-9,Nueces,6.0,600,5,True
-10,Galletas,2.0,500,40,False
-11,Frambuesas,5.0,50,12,True
-12,Piña,3.2,50,20,True
-13,Durazno,3.8,45,18,True
-14,Plátano,1.2,90,30,True
-15,Caramelo Líquido,2.8,350,15,True
-16,Sirope de Fresa,2.5,320,20,True
-17,Sirope de Chocolate,3.0,340,25,True
-18,Avellanas,7.5,650,8,True
-19,Almendras,8.0,700,6,True
-20,Miel,4.5,300,12,True
-21,Chispas de Chocolate,6.5,550,15,True
-22,Malvaviscos,3.0,380,18,True
-23,Yogur Natural,3.5,50,25,True
-24,Coco Rallado,5.0,400,8,True
-25,Pulpa de Maracuyá,3.5,60,10,True
+id,nombre,precio,calorias,inventario,es_vegetariano,tipo,sabor
+1,Leche,1.5,42,50,True,base,Lácteo
+2,Crema de Leche,2.5,210,20,True,base,Lácteo
+3,Azúcar,0.8,400,100,True,complemento,
+4,Cacao en Polvo,3.0,250,30,True,complemento,
+5,Vainilla,5.0,20,10,True,base,Esencia
+6,Fresas,4.0,35,15,True,generico,
+7,Mango,3.5,60,25,True,generico,
+8,Chocolate,4.5,540,10,True,complemento,
+9,Nueces,6.0,600,5,True,complemento,
+10,Galletas,2.0,500,40,False,complemento,
+11,Frambuesas,5.0,50,12,True,generico,
+12,Piña,3.2,50,20,True,generico,
+13,Durazno,3.8,45,18,True,generico,
+14,Plátano,1.2,90,30,True,generico,
+15,Caramelo Líquido,2.8,350,15,True,complemento,
+16,Sirope de Fresa,2.5,320,20,True,complemento,
+17,Sirope de Chocolate,3.0,340,25,True,complemento,
+18,Avellanas,7.5,650,8,True,complemento,
+19,Almendras,8.0,700,6,True,complemento,
+20,Miel,4.5,300,12,True,complemento,
+21,Chispas de Chocolate,6.5,550,15,True,complemento,
+22,Malvaviscos,3.0,380,18,True,complemento,
+23,Yogur Natural,3.5,50,25,True,base,Lácteo
+24,Coco Rallado,5.0,400,8,True,complemento,
+25,Pulpa de Maracuyá,3.5,60,10,True,generico,

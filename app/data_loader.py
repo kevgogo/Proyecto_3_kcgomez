@@ -4,7 +4,7 @@ from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from models.producto import Producto
-from models.ingrediente import Ingrediente
+from models.ingrediente import Base, Complemento, Ingrediente
 from models.usuario import Usuario
 from config import Config
 
@@ -58,26 +58,58 @@ def cargar_datos():
     cargar_productos_ingredientes(os.path.join(BASE_DIR, "productos_por_ingredientes.csv"))
     cargar_usuarios(os.path.join(BASE_DIR, "usuarios.csv"))
 
-def cargar_ingredientes(ruta_csv):
+def cargar_ingredientes(file_path):
     """
-    Carga los datos de ingredientes desde un archivo CSV.
+    Carga los ingredientes desde un archivo CSV a la base de datos.
+    El archivo debe incluir una columna 'tipo' para diferenciar entre 'base', 'complemento' y 'generico'.
+
+    Args:
+        file_path (str): Ruta del archivo CSV.
     """
-    try:
-        with open(ruta_csv, "r", encoding="utf-8") as archivo:
-            lector = csv.DictReader(archivo)
-            for fila in lector:
-                ingrediente = Ingrediente(
-                    nombre=fila["nombre"],
-                    precio=float(fila["precio"]),
-                    calorias=int(fila["calorias"]),
-                    inventario=int(fila["inventario"]),
-                    es_vegetariano=fila["es_vegetariano"].lower() == 'true'
-                )
-                db.session.merge(ingrediente)  # Merge para evitar duplicados
+    with open(file_path, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            tipo = row.get('tipo', 'generico').lower()
+
+            try:
+                # Crear instancias según el tipo
+                if tipo == 'base':
+                    ingrediente = Base(
+                        nombre=row['nombre'],
+                        precio=float(row['precio']),
+                        calorias=int(row['calorias']),
+                        inventario=int(row['inventario']),
+                        es_vegetariano=row['es_vegetariano'].lower() == 'true',
+                        sabor=row['sabor'] 
+                    )
+                elif tipo == 'complemento':
+                    ingrediente = Complemento(
+                        nombre=row['nombre'],
+                        precio=float(row['precio']),
+                        calorias=int(row['calorias']),
+                        inventario=int(row['inventario']),
+                        es_vegetariano=row['es_vegetariano'].lower() == 'true'
+                    )
+                else:  # Tipo generico o ingrediente estándar
+                    ingrediente = Ingrediente(
+                        nombre=row['nombre'],
+                        precio=float(row['precio']),
+                        calorias=int(row['calorias']),
+                        inventario=int(row['inventario']),
+                        es_vegetariano=row['es_vegetariano'].lower() == 'true'
+                    )
+
+                # Guardar en la base de datos
+                db.session.add(ingrediente)
+
+            except KeyError as e:
+                Config.conditional_print(f"Error en los datos: Faltan columnas requeridas {e}")
+            except ValueError as e:
+                Config.conditional_print(f"Error en el formato de los datos: {e}")
+
+        # Confirmar los cambios
         db.session.commit()
-        Config.conditional_print("Datos de ingredientes cargados correctamente.")
-    except Exception as e:
-        Config.conditional_print(f"Error al cargar datos de ingredientes: {e}")
+        Config.conditional_print("Ingredientes cargados exitosamente.")
 
 def cargar_productos(ruta_csv):
     """
