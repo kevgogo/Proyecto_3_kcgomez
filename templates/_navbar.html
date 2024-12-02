@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    {% if usuario_rol in ["admin", "empleado"] %}
+    <a class="navbar-brand" href="/dashboard">Heladería</a>
+    {% else %}
+    <a class="navbar-brand" href="/">Heladería</a>
+    {% endif %}
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
+
+        {% if usuario_rol in ["admin", "empleado"] %}
+        <li class="nav-item"><a class="nav-link" href="/ingredientes">Ingredientes</a></li>
+        {% endif %}
+
+        {% if usuario_rol in ["admin", "empleado", "cliente"] %}
+        <li class="nav-item"><a class="nav-link" href="/vender">Vender</a></li>
+        {% endif %}
+
+        {% if usuario_autenticado %}
+        <li class="nav-item"><a class="nav-link" href="/logout">Cerrar Sesión</a></li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="/login">Iniciar Sesión</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

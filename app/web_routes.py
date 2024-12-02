@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from app.utils import requerir_rol_web, with_jwt
+from app.utils import cerrar_sesion_al_fallar, injectar_jwt_headers, requerir_rol_web, with_jwt
 from config import Config
 import requests
 
@@ -18,23 +18,25 @@ def index():
         return render_template('index.html', productos=productos)
     except Exception as e:
         flash("No se pudieron cargar los productos principales. Inténtalo de nuevo más tarde.", "danger")
-        return render_template('error.html', message="Error al cargar los productos principales.")
+        return redirect(url_for('web.web_error', error_code=500, message="Error al cargar los productos principales."))
 
 @web.route('/ingredientes')
+@injectar_jwt_headers
 @requerir_rol_web('admin', 'empleado')
-def web_ingredientes():
+def web_ingredientes(**kwargs):
     """
     Página que muestra todos los ingredientes.
     """
     try:
         api_url = Config.URLBuilder("ingredientes")
-        response = requests.get(api_url)
+        headers = kwargs.get('headers', {})
+        response = requests.get(api_url, headers=headers)
         response.raise_for_status()
         ingredientes = response.json().get("result", [])
         return render_template('ingredientes.html', ingredientes=ingredientes)
     except Exception as e:
         flash("No se pudieron cargar los ingredientes. Inténtalo de nuevo más tarde.", "danger")
-        return render_template('error.html', message="Error al cargar los ingredientes.")
+        return redirect(url_for('web.web_error', error_code=500, message="Error al cargar los ingredientes."))
 
 @web.route('/productos')
 def web_productos():
@@ -49,41 +51,46 @@ def web_productos():
         return render_template('productos.html', productos=productos)
     except Exception as e:
         flash("No se pudieron cargar los productos. Inténtalo de nuevo más tarde.", "danger")
-        return render_template('error.html', message="Error al cargar los productos.")
+        return redirect(url_for('web.web_error', message="Error al cargar los productos."))
 
 @web.route('/vender')
+@injectar_jwt_headers
 @with_jwt
 @requerir_rol_web('admin', 'empleado', 'cliente')
-def web_lista_para_vender():
+def web_lista_para_vender(**kwargs):
     """
     Página que muestra los productos disponibles para la venta.
     """
     try:
         api_url = Config.URLBuilder("productos")
-        response = requests.get(api_url)
+        headers = kwargs.get('headers', {})
+        response = requests.get(api_url, headers=headers)
         response.raise_for_status()
         productos = response.json().get("result", [])
         return render_template('vender.html', productos=productos)
     except Exception as e:
         flash("No se pudieron cargar los productos para la venta. Inténtalo de nuevo más tarde.", "danger")
-        return render_template('error.html', message="Error al cargar los productos para la venta.")
+        return redirect(url_for('web.web_error', message="Error al cargar los productos para la venta."))
 
 @web.route('/vender/<int:id>', methods=['POST'])
+@injectar_jwt_headers
 @with_jwt
 @requerir_rol_web('admin', 'empleado', 'cliente')
-def web_vender_producto(id):
+@cerrar_sesion_al_fallar
+def web_vender_producto(id, **kwargs):
     """
     Procesa la venta de un producto.
     """
     try:
         api_url = Config.URLBuilder(f"productos/vender/{id}")
-        response = requests.post(api_url)
+        headers = kwargs.get('headers', {})
+        response = requests.post(api_url, headers=headers)
         response.raise_for_status()
         flash("Producto vendido exitosamente.", "success")
         return redirect(url_for('web.web_lista_para_vender'))
     except Exception as e:
         flash(f"Error al vender el producto con ID {id}: {e}", "danger")
-        return render_template('error.html', message=f"Error al vender el producto con ID {id}.")
+        return redirect(url_for('web.web_error', message=f"Error al vender el producto con ID {id}."))
 
 @web.route('/login', methods=['GET', 'POST'])
 def web_login():
@@ -101,13 +108,62 @@ def web_login():
             # Guardar el token JWT en la sesión
             session['jwt'] = response.json().get("access_token")
             flash("Inicio de sesión exitoso.", "success")
-            return redirect(url_for('web.index'))
+            return redirect(url_for('web.dashboard'))
         except Exception as e:
             flash("Error al iniciar sesión. Por favor, verifica tus credenciales.", "danger")
-            return render_template('error.html', message="Error al iniciar sesión.")
+            return redirect(url_for('web.web_error', message="Error al iniciar sesión."))
     return render_template('login.html')
 
+@web.route('/dashboard')
+@injectar_jwt_headers
+@requerir_rol_web('admin', 'empleado')  # Solo administradores y empleados pueden acceder
+@cerrar_sesion_al_fallar
+def dashboard(**kwargs):
+    """
+    Muestra el dashboard con estadísticas.
+    """
+    try:
+        # Construir la URL de la API
+        api_url = Config.URLBuilder("/dashboard/estadisticas")
+        
+        # Obtener los encabezados del decorador
+        headers = kwargs.get('headers', {})
+
+        # Hacer la solicitud a la API
+        response = requests.get(api_url, headers=headers)
+        response.raise_for_status()  # Levantar excepción si la solicitud falla
+        
+        # Procesar los datos obtenidos
+        result = response.json().get('result', {})
+        total_productos = result.get('total_productos', 0)
+        total_ingredientes = result.get('total_ingredientes', 0)
+        total_usuarios = result.get('total_usuarios', 0)
+        total_ventas = result.get('total_ventas', 0)
+        productos_mas_vendidos = result.get('productos_mas_vendidos', [])
+
+        return render_template(
+            'dashboard.html',
+            total_productos=total_productos,
+            total_ingredientes=total_ingredientes,
+            total_usuarios=total_usuarios,
+            productos_mas_vendidos=productos_mas_vendidos,
+            total_ventas=total_ventas
+        )
+    
+    except requests.exceptions.HTTPError as e:
+        flash("Error al obtener estadísticas del dashboard. Verifica tus permisos.", "danger")
+        return redirect(url_for('web.web_error', error_code=e.response.status_code, message=f"HTTPError: {e}"), e.response.status_code)
+    except requests.exceptions.ConnectionError:
+        flash("No se pudo conectar con la API. Por favor, intenta más tarde.", "danger")
+        return redirect(url_for('web.web_error', error_code=500, message="Error de conexión."), 500)
+    except Exception as e:
+        flash("Ocurrió un error inesperado.", "danger")
+        Config.conditional_print(str(e))
+        return redirect(url_for('web.web_error', error_code=500, message=str(e)), 500)
+
+
 @web.route('/logout')
+@cerrar_sesion_al_fallar
 def web_logout():
     """
     Cierra la sesión del usuario.
@@ -117,17 +173,11 @@ def web_logout():
     return redirect(url_for('web.index'))
 
 @web.route('/error')
+@cerrar_sesion_al_fallar
 def web_error():
     """
-    Página genérica de error.
+    Muestra una página de error personalizada.
     """
-    message = request.args.get("message", "Ha ocurrido un error inesperado.")
-    return render_template('error.html', message=message)
-
-@web.route('/unauthorized')
-def unauthorized():
-    return render_template('error.html', error_code=401, message="Acceso denegado."), 401
-
-@web.route('/forbidden')
-def forbidden():
-    return render_template('error.html', error_code=403, message="No tienes permisos para acceder."), 403
+    error_code = request.args.get('error_code', 500)  # Default 500
+    message = request.args.get('message', "Ha ocurrido un error inesperado.")
+    return redirect(url_for('web.web_error', error_code=error_code, message=message), int(error_code))

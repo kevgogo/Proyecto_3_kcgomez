@@ -48,7 +48,7 @@ class Ingrediente(db.Model):
         self._guardar_cambios()
 
     def es_sano(self):
-        return self.calorias < 300
+        return self.calorias is not None and self.calorias < 300
 
     def to_dict(self):
         return {
@@ -57,7 +57,8 @@ class Ingrediente(db.Model):
             'precio': self.precio,
             'calorias': self.calorias,
             'inventario': self.inventario,
-            'es_vegetariano': self.es_vegetariano
+            'es_vegetariano': self.es_vegetariano,
+            'es_sano': self.es_sano(),
         }
     
     def __repr__(self):

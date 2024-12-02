@@ -1,7 +1,15 @@
+from datetime import datetime, timezone
+import json
 from functools import wraps
 from flask import jsonify, render_template, session, request, redirect, url_for, flash, Config
 from flask_jwt_extended import decode_token, get_jwt_identity, verify_jwt_in_request
 from flask_jwt_extended.exceptions import JWTDecodeError, NoAuthorizationError
+
+def es_solicitud_api():
+    """
+    Determina si la solicitud actual es para una API.
+    """
+    return request.path.startswith('/api') or request.content_type == 'application/json'
 
 def manejar_errores(func):
     """
@@ -18,18 +26,21 @@ def manejar_errores(func):
     return wrapper
 
 def with_jwt(func):
-    """
-    Decorador para agregar automáticamente el token JWT de la sesión a los headers de las solicitudes.
-    """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
-        token = session.get('jwt')
-        if not token:
-            flash("Por favor, inicia sesión para acceder a esta página.", "warning")
-            return render_template('error.html', error_code=401, message="No estás autenticado."), 401
-        # Agregar el token al header Authorization
-        request.headers = {**request.headers, "Authorization": f"Bearer {token}"}
-        return func(*args, **kwargs)
+        if "Authorization" in request.headers:  # Caso de uso en API
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                return redirect(url_for('web.error', error_code=401, message="Token inválido o no proporcionado."))
+        else:  # Caso de uso en vistas web
+            token = session.get('jwt')
+            if not token:
+                return redirect(url_for('web.error', error_code=401, message="No estás autenticado."))
+            if not validar_jwt(token):
+                return redirect(url_for('web.error', error_code=401, message="Token inválido o expirado."))
+            return func(*args, **kwargs)
     return wrapper
 
 def validar_jwt(token):
@@ -48,18 +59,6 @@ def validar_jwt(token):
         flash("Token inválido. Por favor, inicia sesión de nuevo.", "danger")
         return False
 
-def obtener_usuario_actual():
-    """
-    Obtiene la información del usuario actual desde el token JWT.
-    """
-    try:
-        usuario = get_jwt_identity()
-        if not usuario:
-            raise ValueError("Usuario no autenticado.")
-        return usuario
-    except Exception as e:
-        return None
-
 def requerir_rol_api(*roles):
     """
     Decorador para rutas de la API que verifica el rol del usuario desde el JWT.
@@ -68,8 +67,9 @@ def requerir_rol_api(*roles):
         @wraps(f)
         def envoltura(*args, **kwargs):
             verify_jwt_in_request()
-            usuario = get_jwt_identity()
-            if usuario.get('rol') not in roles:
+            decoded = get_jwt_identity()
+            user = json.loads(decoded)
+            if user.get('rol') not in roles:
                 return jsonify({"message": "Acceso denegado"}), 403
             return f(*args, **kwargs)
         return envoltura
@@ -82,13 +82,62 @@ def requerir_rol_web(*roles):
     def decorador(f):
         @wraps(f)
         def envoltura(*args, **kwargs):
-            usuario = session.get('usuario')
-            if not usuario:
-                # Usuario no autenticado
+            token = session.get('jwt')
+            if not token:
+                # Renderizar la página de error para usuario no autenticado
                 return render_template('error.html', error_code=401, message="No estás autenticado."), 401
-            if usuario.get('rol') not in roles:
-                # Usuario autenticado pero sin permisos
-                return render_template('error.html', error_code=403, message="Acceso denegado."), 403
+            if token and validar_jwt(token):
+                decoded = decode_token(token)
+                user = json.loads(decoded.get('sub'))
+                if user.get('rol') not in roles:
+                    # Renderizar la página de error para usuario sin permisos
+                    return render_template('error.html', error_code=403, message="Acceso denegado."), 403
             return f(*args, **kwargs)
         return envoltura
     return decorador
+
+def injectar_jwt_headers(func):
+    """
+    Decorador para inyectar automáticamente el token JWT de la sesión en los encabezados.
+    Verifica que el token no haya expirado.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        token = session.get('jwt')
+        if not token:
+            flash("No estás autenticado. Por favor, inicia sesión.", "danger")
+            return redirect(url_for('web.web_error'))
+        
+        try:
+            # Decodificar el token para verificar su validez
+            decoded_token = decode_token(token)
+            exp = decoded_token.get("exp")
+            if exp and datetime.fromtimestamp(exp, tz=timezone.utc) < datetime.now(tz=timezone.utc):
+                flash("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.", "danger")
+                return redirect(url_for('web.web_login'))
+        except JWTDecodeError:
+            flash("Token inválido. Por favor, inicia sesión de nuevo.", "danger")
+            return redirect(url_for('web.web_login'))
+        except NoAuthorizationError:
+            flash("Token inválido. Por favor, inicia sesión de nuevo.", "danger")
+            return redirect(url_for('web.web_login'))
+        
+        # Inyectar el token en los encabezados globales
+        kwargs["headers"] = {
+            "Authorization": f"Bearer {token}"
+        }
+
+        return func(*args, **kwargs)
+    return wrapper
+
+def cerrar_sesion_al_fallar(func):
+    """
+    Decorador para cerrar sesión automáticamente cuando se accede a rutas de error.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Limpiar la sesión
+        session.clear()
+        flash("Tu sesión ha sido cerrada debido a un error o falta de autorización.", "warning")
+        return func(*args, **kwargs)
+    return wrapper

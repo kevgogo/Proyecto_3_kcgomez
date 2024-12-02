@@ -96,12 +96,18 @@ class HeladeriaController:
         producto = Producto.query.get(id)
         if not producto:
             raise ValueError(f"Producto con ID {id} no encontrado.")
-        producto.vender()
-        db.session.commit()
-        return {
-            "message": f"Producto '{producto.nombre}' vendido exitosamente.",
-            "result": {"producto_id": id}
-        }, 200
+        
+        try:
+            producto.vender()
+            return {
+                "message": f"Producto '{producto.nombre}' vendido exitosamente.",
+                "result": {"producto_id": id}
+            }, 200
+        except ValueError as e:
+            return {
+                "message": str(e),
+                "result": {"producto_id": id}
+            }, 400
 
     @staticmethod
     @manejar_errores
@@ -213,4 +219,40 @@ class HeladeriaController:
         return {
             "message": f"Ingrediente '{ingrediente.nombre}' es {'sano' if ingrediente.es_sano else 'no sano'}.",
             "result": {"ingrediente_id": id, "es_sano": ingrediente.es_sano}
+        }, 200
+
+    @staticmethod
+    @manejar_errores
+    def obtener_estadisticas_generales():
+        """
+        Devuelve estadísticas generales para el dashboard.
+        """
+        total_productos = Producto.query.count()
+        total_ingredientes = Ingrediente.query.count()
+        total_usuarios = Usuario.query.count()
+
+        productos_mas_vendidos = Producto.query.filter(Producto.ventas > 0).order_by(Producto.ventas.desc()).all()
+        total_ventas = 0
+
+        productos_mas_vendidos_data = []
+        for producto in productos_mas_vendidos:
+            valor_total_producto = producto.ventas * producto.precio_publico
+            total_ventas += valor_total_producto
+            productos_mas_vendidos_data.append({
+                "id": producto.id,
+                "nombre": producto.nombre,
+                "ventas": producto.ventas,
+                "precio_publico": producto.precio_publico,
+                "valor_total": valor_total_producto
+            })
+
+        return {
+            "message": "Estadísticas generales obtenidas con éxito.",
+            "result": {
+                "total_productos": total_productos,
+                "total_ingredientes": total_ingredientes,
+                "total_usuarios": total_usuarios,
+                "total_ventas": total_ventas,
+                "productos_mas_vendidos": productos_mas_vendidos_data
+            }
         }, 200

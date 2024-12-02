@@ -1,6 +1,9 @@
+from flask import json, redirect, render_template, session, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, decode_token
 from flask_bcrypt import Bcrypt
+from jwt import ExpiredSignatureError, InvalidTokenError
+from app.utils import es_solicitud_api, validar_jwt
 from config import Config
 
 # Instancias de las extensiones
@@ -19,43 +22,70 @@ def initialize_extensions(app):
     jwt.init_app(app)
     Config.conditional_print("JWT initialized successfully.")
 
-    # Configuraciones adicionales para JWT
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
-        """
-        Maneja el caso de que el token JWT haya expirado.
-        """
-        return {
-            "message": "El token ha expirado. Por favor, inicia sesión nuevamente.",
-            "result": None
-        }, 401
+        if es_solicitud_api():
+            # Respuesta JSON para la API
+            return {"error": "Token expirado", "message": "El token ha expirado. Por favor, renueva tu sesión."}, 401
+        else:
+            # Renderizado para vistas web
+            return render_template('error.html', error_code=401, message="El token ha expirado. Por favor, inicia sesión nuevamente."), 401
 
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
-        """
-        Maneja el caso de que el token JWT sea inválido.
-        """
-        return {
-            "message": "Token inválido. Por favor, inicia sesión nuevamente.",
-            "result": None
-        }, 401
+        if es_solicitud_api():
+            return {"error": "Token inválido", "message": "El token proporcionado no es válido."}, 401
+        else:
+            return render_template('error.html', error_code=401, message="Token inválido. Por favor, inicia sesión nuevamente."), 401
 
     @jwt.unauthorized_loader
     def missing_token_callback(error):
-        """
-        Maneja el caso de que el token JWT falte en la solicitud.
-        """
-        return {
-            "message": "Se requiere un token para acceder a este recurso.",
-            "result": None
-        }, 401
+        if es_solicitud_api():
+            return {"error": "Token faltante", "message": "No se proporcionó un token para acceder a este recurso."}, 401
+        else:
+            return render_template('error.html', error_code=401, message="Se requiere un token para acceder a este recurso."), 401
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
+        if es_solicitud_api():
+            return {"error": "Token revocado", "message": "El token ha sido revocado. Por favor, inicia sesión nuevamente."}, 401
+        else:
+            return render_template('error.html', error_code=401, message="El token ha sido revocado. Por favor, inicia sesión nuevamente."), 401
+    
+    @app.context_processor
+    def inject_user():
         """
-        Maneja el caso de que el token JWT haya sido revocado.
+        Inyecta información del usuario decodificada desde el token JWT usando Flask-JWT-Extended.
         """
-        return {
-            "message": "El token ha sido revocado. Por favor, inicia sesión nuevamente.",
-            "result": None
-        }, 401
+        token = session.get('jwt')
+        if not token:
+            return {
+                'usuario_autenticado': False,
+                'usuario_rol': None,
+                'usuario_nombre' : None
+            }
+        
+        try:
+            if token and validar_jwt(token):
+                decoded = decode_token(token)
+                user = json.loads(decoded.get('sub'))
+                usuario_rol = user.get('rol')  # Extraer el rol del usuario
+                usuario_name = user.get('username')  # Extraer el username del usuario
+                return {
+                    'usuario_autenticado': True,
+                    'usuario_rol': usuario_rol,
+                    'usuario_nombre' : usuario_name
+                }
+        except ExpiredSignatureError:
+            return {
+                'usuario_autenticado': False,
+                'usuario_rol': None,
+                'usuario_nombre' : None
+            }
+        except InvalidTokenError:
+            return {
+                'usuario_autenticado': False,
+                'usuario_rol': None,
+                'usuario_nombre' : None
+            }
+        

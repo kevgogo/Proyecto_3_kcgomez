@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, session
+from flask_jwt_extended import decode_token
+from jwt import ExpiredSignatureError, InvalidTokenError
 from config import Config
 from app.extensions import initialize_extensions
 from app.api_routes import api
@@ -14,7 +16,7 @@ def create_app():
 
     app.secret_key = Config.SECRET_KEY
     app.config['JWT_SECRET_KEY'] = Config.SECRET_KEY
-
+    app.config["SESSION_PERMANENT"] = Config.SESSION_PERMANENT
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['SQLALCHEMY_DATABASE_URI'] = Config.database_uri()

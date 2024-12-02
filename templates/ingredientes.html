@@ -9,48 +9,12 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">Heladería</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
+  {% include '_navbar.html' %}
 
-          {% if usuario_rol == "admin" or usuario_rol == "empleado" %}
-          <li class="nav-item"><a class="nav-link" href="/ingredientes">Ingredientes</a></li>
-          {% endif %}
-
-          {% if usuario_rol in ["admin", "empleado", "cliente"] %}
-          <li class="nav-item"><a class="nav-link" href="/vender">Vender</a></li>
-          {% endif %}
-
-          {% if usuario_autenticado %}
-          <li class="nav-item"><a class="nav-link" href="/logout">Cerrar Sesión</a></li>
-          {% else %}
-          <li class="nav-item"><a class="nav-link" href="/login">Iniciar Sesión</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
 
 
   <div class="container mt-4">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="container mt-3">
-      {% set category, message = messages[-1] %}
-      <div class="alert alert-{{ category }}" role="alert">
-        {{ message }}
-      </div>
-    </div>
-    {% endif %}
-    {% endwith %}
+    {% include '_flashes.html' %}
 
     <h1 class="text-center">Lista de Ingredientes</h1>
     <p class="text-center text-muted">Explora los ingredientes utilizados en nuestros productos.</p>
@@ -63,9 +27,12 @@
             <th>ID</th>
             <th>Nombre</th>
             <th>Calorías</th>
+            {% if usuario_rol == "admin" %}
             <th>Precio</th>
             <th>Stock</th>
+            {% endif %}
             <th>Es Vegetariano</th>
+            <th>Es Sano</th>
           </tr>
         </thead>
         <tbody>
@@ -74,9 +41,12 @@
             <td>{{ ingrediente.id }}</td>
             <td>{{ ingrediente.nombre }}</td>
             <td>{{ ingrediente.calorias }}</td>
+            {% if usuario_rol == "admin" %}
             <td>${{ ingrediente.precio }}</td>
             <td>{{ ingrediente.inventario }}</td>
+            {% endif %}
             <td>{{ "Sí" if ingrediente.es_vegetariano else "No" }}</td>
+            <td>{{ "Sí" if ingrediente.es_sano else "No" }}</td>
           </tr>
           {% endfor %}
         </tbody>

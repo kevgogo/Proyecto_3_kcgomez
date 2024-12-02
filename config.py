@@ -1,6 +1,7 @@
 import os
 import secrets
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -11,6 +12,10 @@ class Config:
     ENABLE_PRINTS = os.getenv('ENABLE_PRINTS', 'false').lower() == 'true'
     TESTING = os.getenv('TESTING', 'false').lower() == 'true'
     API_PREFIX = os.getenv('API_PREFIX', 'api')
+    SESSION_PERMANENT = os.getenv('SESSION_PERMANENT', 'false').lower() == 'true'
+    
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=1)  # Duración de 1 hora
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)  # Duración de 1 hora
 
     # Database Configuration
     NAME_DB = os.getenv('NAME_DB', 'heladeria')
