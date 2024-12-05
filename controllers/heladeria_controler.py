@@ -84,7 +84,7 @@ class HeladeriaController:
             raise ValueError(f"Producto con ID {id} no encontrado.")
         return {
             "message": f"Costo de producción del producto '{producto.nombre}' obtenido.",
-            "result": {"producto_id": id, "costo": producto.costo}
+            "result": {"producto_id": id, "costo": producto.calcular_costo()}
         }, 200
 
     @staticmethod
