@@ -104,7 +104,7 @@ def vender_producto_por_id(id):
     Vende un producto por su ID (admin, empleado y cliente).
     """
     response, status = HeladeriaController.vender_producto_por_id(id)
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/reabastecer/<int:id>', methods=['POST'])
 @with_jwt_api
