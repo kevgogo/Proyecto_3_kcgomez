@@ -52,6 +52,15 @@ class Ingrediente(db.Model):
             self._guardar_cambios()
         else:
             raise ValueError(f"No hay suficiente inventario para {self.nombre}.")
+        
+    def renovar_inventario(self, cantidad):
+        """
+        Renueva el inventario del complemento, reiniciándolo al valor proporcionado.
+        """
+        if cantidad <= 0:
+            raise ValueError("La cantidad debe ser positiva.")
+        self.inventario = cantidad
+        self._guardar_cambios()
 
     def es_sano(self):
         return self.calorias is not None and self.calorias < 300
