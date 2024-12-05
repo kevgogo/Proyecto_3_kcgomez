@@ -43,7 +43,7 @@ def listar_productos():
     Lista todos los productos disponibles (accesible para cualquiera).
     """
     response, status = HeladeriaController.listar_productos()
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/<int:id>', methods=['GET'])
 @with_jwt_api
@@ -53,7 +53,7 @@ def obtener_producto_por_id(id):
     Obtiene un producto por su ID (admin y empleado).
     """
     response, status = HeladeriaController.obtener_producto_por_id(id)
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/buscar', methods=['GET'])
 @with_jwt_api
@@ -64,7 +64,7 @@ def buscar_producto_por_nombre():
     """
     nombre = request.args.get("nombre", "")
     response, status = HeladeriaController.buscar_producto_por_nombre(nombre)
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/calorias/<int:id>', methods=['GET'])
 @with_jwt_api
@@ -74,7 +74,7 @@ def obtener_calorias_producto(id):
     Obtiene las calorías de un producto por su ID (admin, empleado y cliente).
     """
     response, status = HeladeriaController.obtener_calorias_producto(id)
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/rentabilidad/<int:id>', methods=['GET'])
 @with_jwt_api
@@ -84,7 +84,7 @@ def obtener_rentabilidad_producto(id):
     Obtiene la rentabilidad de un producto por su ID (solo admin).
     """
     response, status = HeladeriaController.obtener_rentabilidad_producto(id)
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/costo/<int:id>', methods=['GET'])
 @with_jwt_api
@@ -94,7 +94,7 @@ def obtener_costo_producto(id):
     Obtiene el costo de producción de un producto por su ID (admin y empleado).
     """
     response, status = HeladeriaController.obtener_costo_producto(id)
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/vender/<int:id>', methods=['POST'])
 @with_jwt_api
@@ -115,7 +115,7 @@ def reabastecer_producto(id):
     """
     cantidad = request.json.get("cantidad", 0)
     response, status = HeladeriaController.reabastecer_producto(id, cantidad)
-    return jsonify(response), status
+    return response, status
 
 @api.route('/productos/renovar/<int:id>', methods=['POST'])
 @with_jwt_api
@@ -126,7 +126,7 @@ def renovar_inventario_producto(id):
     """
     cantidad = request.json.get("cantidad", 0)
     response, status = HeladeriaController.renovar_inventario_producto(id, cantidad)
-    return jsonify(response), status
+    return response, status
 
 # ------------------- Rutas para Ingredientes -------------------
 
