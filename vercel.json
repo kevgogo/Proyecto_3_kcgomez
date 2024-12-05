@@ -17,6 +17,5 @@
 	],
 	"env": {
 		"DATABASE_URL": "sqlite:///db/database.db"
-	},
-	"ignoreCommand": "echo 'Ignoring...'"
+	}
 }
