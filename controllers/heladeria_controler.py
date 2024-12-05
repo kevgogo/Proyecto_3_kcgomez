@@ -235,7 +235,7 @@ class HeladeriaController:
             raise ValueError(f"Ingrediente con ID {id} no encontrado.")
         return {
             "message": f"Ingrediente '{ingrediente.nombre}' es {'sano' if ingrediente.es_sano else 'no sano'}.",
-            "result": {"ingrediente_id": id, "es_sano": ingrediente.es_sano}
+            "result": {"ingrediente_id": id, "es_sano": ingrediente.es_sano()}
         }, 200
 
     @staticmethod
