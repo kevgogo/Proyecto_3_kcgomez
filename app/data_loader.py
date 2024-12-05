@@ -9,43 +9,61 @@ from models.usuario import Usuario
 from config import Config
 
 def inicializar_base_de_datos():
-    
     from sqlalchemy import create_engine, text, inspect
-
     """
     Inicializa la base de datos: crea tablas y carga datos iniciales desde CSV.
+    En entorno production, se recrea la base de datos (elimina y crea todas las tablas).
     """
-    try:
-        connection = db.engine.connect()
-        Config.conditional_print("Database connection successful.")
-        connection.close()
-    except Exception as e:
-        Config.conditional_print(f"Database connection failed: {e}")
 
     try:
+        # Inspeccionar tablas existentes
         inspector = inspect(db.engine)
         tables = inspector.get_table_names()
 
-        if not tables:
-            Config.conditional_print("No tables found. Ready to create tables.")
+        
+
+        if Config.APP_ENV == 'production':
+            # Eliminar todas las tablas
+            Config.conditional_print("Production environment detected. Dropping tables...")
+            Config.conditional_print(f"Tables to drop: {tables}")
+            db.drop_all()
+            
+            # Verificar si las tablas realmente fueron eliminadas
+            remaining_tables = inspect(db.engine).get_table_names()
+            if not remaining_tables:
+                Config.conditional_print("All tables successfully dropped.")
+            else:
+                Config.conditional_print(f"Error: Remaining tables after drop: {remaining_tables}")
+                return  # Detener el proceso si aún quedan tablas
+            
+            # Crear tablas desde cero
+            Config.conditional_print("Recreating tables...")
             db.create_all()
-            Config.conditional_print("Tables created successfully.")
+            Config.conditional_print("Tables recreated successfully.")
+
+        elif Config.APP_ENV == 'development':
+            # En desarrollo, solo crear si no existen tablas
+            if not tables:
+                Config.conditional_print("Development environment: No tables found. Creating tables...")
+                db.create_all()
+                Config.conditional_print("Tables created successfully.")
+            else:
+                Config.conditional_print(f"Development environment: Tables found ({tables}). No action taken.")
+
         else:
-            with db.engine.connect() as conn:
-                sqlite_sequence_exists = conn.execute(text("SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence';")).fetchone()
+            Config.conditional_print(f"Unknown environment '{Config.APP_ENV}'. Skipping database initialization.")
 
-            Config.conditional_print(f"Tables found ({tables}). Proceeding to truncate...")
-            with db.engine.begin() as conn:
-                for table in tables:
-                    conn.execute(text(f"DELETE FROM {table}"))
-                    if sqlite_sequence_exists:
-                        conn.execute(text(f"UPDATE sqlite_sequence SET seq = 0 WHERE name = '{table}'"))
-            Config.conditional_print("All tables truncated successfully.")
+        # Cargar datos iniciales
+        Config.conditional_print("Loading initial data...")
+        try:
+            cargar_datos()
+            Config.conditional_print("Initial data loaded successfully.")
+        except Exception as e:
+            Config.conditional_print(f"Error loading initial data: {e}")
+            return  # Detener en caso de error
 
-        # Cargar datos
-        cargar_datos()
     except Exception as e:
-        Config.conditional_print(f"Error with inspector or database operations: {e}")
+        Config.conditional_print(f"Error during database initialization: {e}")
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
@@ -66,7 +84,7 @@ def cargar_ingredientes(file_path):
     Args:
         file_path (str): Ruta del archivo CSV.
     """
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
             tipo = row.get('tipo', 'generico').lower()
