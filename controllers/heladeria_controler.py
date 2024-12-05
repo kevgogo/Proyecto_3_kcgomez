@@ -70,7 +70,7 @@ class HeladeriaController:
             raise ValueError(f"Producto con ID {id} no encontrado.")
         return {
             "message": f"Rentabilidad del producto '{producto.nombre}' obtenida.",
-            "result": {"producto_id": id, "rentabilidad": producto.rentabilidad}
+            "result": {"producto_id": id, "rentabilidad": producto.rentabilidad()}
         }, 200
 
     @staticmethod
