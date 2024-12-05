@@ -61,8 +61,8 @@ def initialize_extensions(app):
         if not token:
             return {
                 'usuario_autenticado': False,
-                'usuario_rol': None,
-                'usuario_nombre' : None
+                'usuario_rol': "",
+                'usuario_nombre' : ""
             }
         
         try:
@@ -73,19 +73,27 @@ def initialize_extensions(app):
                 usuario_name = user.get('username')  # Extraer el username del usuario
                 return {
                     'usuario_autenticado': True,
-                    'usuario_rol': usuario_rol,
+                    'usuario_rol': # `usuario_rol` is a variable that is used to store the role of the
+                    # authenticated user. It is extracted from the decoded JWT token.
+                    # The role information is typically included in the token payload
+                    # when the user logs in or authenticates. The role can be used to
+                    # determine the permissions and access rights of the user within
+                    # the application. In this code snippet, `usuario_rol` is being
+                    # extracted from the decoded JWT token's payload and then used to
+                    # provide information about the user's role in the application.
+                    usuario_rol,
                     'usuario_nombre' : usuario_name
                 }
         except ExpiredSignatureError:
             return {
                 'usuario_autenticado': False,
-                'usuario_rol': None,
-                'usuario_nombre' : None
+                'usuario_rol': "",
+                'usuario_nombre' : ""
             }
         except InvalidTokenError:
             return {
                 'usuario_autenticado': False,
-                'usuario_rol': None,
-                'usuario_nombre' : None
+                'usuario_rol': "",
+                'usuario_nombre' : ""
             }
         

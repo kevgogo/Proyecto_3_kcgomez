@@ -47,7 +47,7 @@ def with_jwt_api(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        token = request.headers.get('Authorization', None)
+        token = request.headers.get('Authorization', "")
         if not token and not token.startswith('Bearer '):
             return {"error": "Token inválido", "message": "El token proporcionado no es válido o ha expirado."}, 401
         if not validar_jwt(token.split(' ')[1]):
