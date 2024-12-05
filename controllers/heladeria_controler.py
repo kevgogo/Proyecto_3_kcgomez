@@ -126,8 +126,6 @@ class HeladeriaController:
         for ingrediente in producto.ingredientes:
             try:
                 cantidad_anterior = ingrediente.inventario
-                if not isinstance(ingrediente, (Base, Complemento)):
-                    raise AttributeError(f"El ingrediente con ID {ingrediente.id} no soporta la operación 'abastecer'.")
                 ingrediente.abastecer(cantidad)
                 resultado.append({
                     "ingrediente_id": ingrediente.id,
