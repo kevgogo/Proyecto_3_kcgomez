@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
 import json
 from functools import wraps
-from flask import jsonify, render_template, session, request, redirect, url_for, flash, Config
+from flask import jsonify, render_template, session, request, redirect, url_for, flash
 from flask_jwt_extended import decode_token, get_jwt_identity, verify_jwt_in_request
 from flask_jwt_extended.exceptions import JWTDecodeError, NoAuthorizationError
+from config import Config
 
 def es_solicitud_api():
     """
