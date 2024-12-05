@@ -3,7 +3,10 @@
 	"builds": [
 		{
 			"src": "app.py",
-			"use": "@vercel/python"
+			"use": "@vercel/python",
+			"config": {
+				"runtime": "python3.10"
+			}
 		}
 	],
 	"routes": [
@@ -12,17 +15,8 @@
 			"dest": "app.py"
 		}
 	],
-	"functions": {
-		"app.py": {
-			"runtime": "python3.10"
-		}
-	},
 	"env": {
-		"APP_ENV": "development",
-		"ENABLE_PRINTS": "true",
-		"SECRET_KEY": "2b75175d9dc68d6531a19cafe8852cce206503a7b9368325cb19a1ed75d02935",
-		"NAME_DB": "HELADERIA",
-		"API_PREFIX": "api"
+		"DATABASE_URL": "sqlite:///db/database.db"
 	},
 	"ignoreCommand": "echo 'Ignoring...'"
 }
